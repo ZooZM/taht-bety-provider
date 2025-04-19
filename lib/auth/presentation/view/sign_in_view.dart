@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taht_bety_provider/auth/data/repo/auth_repo_imp.dart';
 import 'package:taht_bety_provider/auth/presentation/view_model/authcubit/auth_cubit.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_button.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_footer.dart';
+import 'package:taht_bety_provider/core/utils/api_service.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -24,6 +27,41 @@ class _SignInScreenState extends State<SignInScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void fetchUser() async {
+    final authRepo = AuthRepoImp(ApiService(Dio()));
+    try {
+      final response = await authRepo.fetchuser();
+      response.fold(
+        (failure) {
+          // Handle failure case
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(failure.failurMsg),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        },
+        (user) {
+          context.go(AppRouter.kHomePage);
+        },
+      );
+    } catch (e) {
+      // Handle any exceptions that occur during the fetch
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("An error occurred: $e"),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    fetchUser();
+    super.initState();
   }
 
   void _signIn(BuildContext context) {

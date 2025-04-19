@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             isPressed: iconPressed[1],
           ),
           CusttomPageIcon(
-            icon: Icons.shelves,
+            icon: Icons.document_scanner_outlined,
             isPressed: iconPressed[2],
           ),
           CusttomPageIcon(
