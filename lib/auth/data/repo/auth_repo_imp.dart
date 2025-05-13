@@ -33,12 +33,12 @@ class AuthRepoImp implements AuthRepo {
       if (response['success']) {
         final userData = response['data'];
         CurUser user = CurUser.fromJson(userData['user']);
+        user.token = userData['token'];
 
         if (user.role != 'provider') {
           return Left(Serverfailure(
               "You are not allowed to sign in as a non-provider."));
         }
-        user.token = userData['token'];
         await UserStorage.saveUserData(
           token: user.token,
           userId: user.userId,
@@ -51,8 +51,28 @@ class AuthRepoImp implements AuthRepo {
           age: user.age,
           gender: user.gender,
           verificationCodeExpiresAt: user.verificationCodeExpiresAt,
+          idFrontSide: user.idFrontSide,
+          idBackSide: user.idBackSide,
+          isActive: user.isActive,
+          isOnline: user.isOnline,
+          type: user.type,
         );
-
+        try {
+          final response =
+              await apiService.get(endPoint: 'providers/${user.userId}');
+          if (response['success']) {
+            final providerData = response['data'];
+            user.idFrontSide = providerData['id'][0];
+            user.idBackSide = providerData['id'][1] ?? '';
+            user.isActive = providerData['isActive'];
+            user.isOnline = providerData['isOnline'];
+            user.type = providerData['providerType'];
+          } else {
+            return Left(Serverfailure(response['message']));
+          }
+        } catch (e) {
+          return Left(Serverfailure(user.email));
+        }
         return Right(user);
       } else {
         return Left(Serverfailure('Failed to sign in'));
@@ -66,7 +86,7 @@ class AuthRepoImp implements AuthRepo {
               'An error occurred during sign in'));
         }
       }
-      return Left(Serverfailure('An error occurred during sign in'));
+      return Left(Serverfailure(e.toString()));
     } catch (e) {
       print(e);
       return Left(Serverfailure(e.toString()));
@@ -80,10 +100,65 @@ class AuthRepoImp implements AuthRepo {
   }
 
   @override
-  Future<Either<Failure, CurUser>> signUpWithEmailAndPassword(
-      {required String email, required String password}) {
-    // TODO: implement signUpWithEmailAndPassword
-    throw UnimplementedError();
+  Future<Either<Failure, String>> signUp({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    required String region,
+    required String gender,
+    required String age,
+    required String role,
+  }) async {
+    try {
+      final response = await apiService.post(
+        endPoint: 'auth/signup',
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'passwordConfirm': confirmPassword,
+          'region': region,
+          'gender': gender,
+          'age': age,
+          'signUpPlatform': 'mobile',
+          'role': role,
+        },
+      );
+
+      if (response['success']) {
+        final userData = response['data'];
+        CurUser user = CurUser.fromJson(userData['user']);
+        user.token = userData['token'];
+        await UserStorage.saveUserData(
+          token: user.token,
+          userId: user.userId,
+          name: user.name,
+          email: user.email,
+          photo: user.photo,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          region: user.region,
+          age: user.age,
+          gender: user.gender,
+          verificationCodeExpiresAt: user.verificationCodeExpiresAt,
+          idFrontSide: user.idFrontSide,
+          idBackSide: user.idBackSide,
+          isActive: user.isActive,
+          isOnline: user.isOnline,
+          type: user.type,
+        );
+        return Right(response['message']);
+      } else {
+        return Left(Serverfailure(response['message'] ?? 'Signup failed.'));
+      }
+    } on DioException catch (e) {
+      String errorMessage = 'An error occurred during sign up';
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        errorMessage = e.response!.data['message'] ?? errorMessage;
+      }
+      return Left(Serverfailure(errorMessage));
+    }
   }
 
   @override

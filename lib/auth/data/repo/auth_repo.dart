@@ -8,9 +8,15 @@ abstract class AuthRepo {
     required String password,
   });
 
-  Future<Either<Failure, CurUser>> signUpWithEmailAndPassword({
+  Future<Either<Failure, String>> signUp({
+    required String name,
     required String email,
     required String password,
+    required String confirmPassword,
+    required String region,
+    required String gender,
+    required String age,
+    required String role,
   });
 
   Future<void> signOut();

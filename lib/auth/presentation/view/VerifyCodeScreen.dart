@@ -65,7 +65,6 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
     }
 
     setState(() => _isLoading = true);
-    print(_otpControllers.map((c) => c.text).join());
     int code = int.parse(_otpControllers.map((c) => c.text).join());
     try {
       final response = await Dio().post(

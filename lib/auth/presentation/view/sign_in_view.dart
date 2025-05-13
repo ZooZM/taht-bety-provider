@@ -38,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
           // Handle failure case
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(failure.failurMsg),
+              content: Text('failure.failurMsg'),
               duration: const Duration(seconds: 3),
             ),
           );
@@ -189,6 +189,15 @@ class _SignInScreenState extends State<SignInScreen> {
                               duration: Duration(seconds: 3),
                             ),
                           );
+                        } else if (state is AuthProviderAccountFailure) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('you have to create a provider account'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          context.go(AppRouter.kCreateProviderAccount);
                         }
                       },
                       builder: (context, state) {
@@ -199,6 +208,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ? null
                               : () {
                                   _signIn(context);
+                                  // context.push(AppRouter.kTakeSelfie);
                                 },
                           isLoading: isLoading,
                         );
@@ -208,7 +218,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     CustomFooter(
                       text: "Don’t have an account?",
                       buttonText: "Sign Up",
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push(AppRouter.kSignUp);
+                      },
                     )
                   ],
                 ),

@@ -25,6 +25,16 @@ class CurUser extends HiveObject {
   String gender;
   @HiveField(10)
   DateTime verificationCodeExpiresAt;
+  @HiveField(11)
+  String idFrontSide;
+  @HiveField(12)
+  String idBackSide;
+  @HiveField(13)
+  String isActive;
+  @HiveField(14)
+  String isOnline;
+  @HiveField(15)
+  String type;
 
   CurUser({
     required this.token,
@@ -38,6 +48,11 @@ class CurUser extends HiveObject {
     required this.age,
     required this.gender,
     required this.verificationCodeExpiresAt,
+    required this.idFrontSide,
+    required this.idBackSide,
+    required this.isActive,
+    required this.isOnline,
+    required this.type,
   });
 
   factory CurUser.fromJson(Map<String, dynamic> json) {
@@ -62,6 +77,11 @@ class CurUser extends HiveObject {
           ? DateTime.tryParse(json['verificationCodeExpiresAt']) ??
               DateTime.now()
           : DateTime.now(),
+      idFrontSide: json['idFrontSide'] ?? '',
+      idBackSide: json['idBackSide'] ?? '',
+      isActive: json['isActive'] ?? '',
+      isOnline: json['isOnline'] ?? '',
+      type: json['type'] ?? '',
     );
   }
 }

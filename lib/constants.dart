@@ -10,7 +10,7 @@ const kGray = Color(0xFFc4cbd9);
 const kOrange = Color(0xFFf04a4a);
 //http://10.0.2.2
 //192.168.100.6
-const kBaseUrl = "http://192.168.100.6:8000/api/v1/";
+const kBaseUrl = "https://ta7t-bety.vercel.app/api/v1/";
 const kBaseCategoryAssets = "assets/images/market_categories/";
 
 const kAddressBox = "addressBox";

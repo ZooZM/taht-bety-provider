@@ -32,6 +32,11 @@ class UserStorage {
     required int? age,
     required String? gender,
     required DateTime? verificationCodeExpiresAt,
+    required String? idFrontSide,
+    required String? idBackSide,
+    required String? isActive,
+    required String? isOnline,
+    required String? type,
   }) async {
     final user = CurUser(
       token: token ?? "unknown",
@@ -45,6 +50,11 @@ class UserStorage {
       age: age ?? 0,
       gender: gender ?? "unknown",
       verificationCodeExpiresAt: verificationCodeExpiresAt ?? DateTime.now(),
+      idFrontSide: idFrontSide ?? '',
+      idBackSide: idBackSide ?? '',
+      isActive: isActive ?? 'unknown',
+      isOnline: isOnline ?? 'unknown',
+      type: type ?? 'unknown',
     );
 
     await _box?.put(kCurUserBox, user);
@@ -53,8 +63,8 @@ class UserStorage {
   static CurUser getUserData() {
     return _box?.get(kCurUserBox) ??
         CurUser(
-          token: '',
-          userId: '',
+          token: 'unknown',
+          userId: 'unknown',
           name: 'unknown',
           email: 'unknown@example.com',
           photo: 'default_photo_url',
@@ -64,6 +74,11 @@ class UserStorage {
           age: 0,
           gender: 'unknown',
           verificationCodeExpiresAt: DateTime.now(),
+          idFrontSide: 'unknown',
+          idBackSide: 'unknown',
+          isActive: 'unknown',
+          isOnline: 'unknown',
+          type: 'unknown',
         );
   }
 

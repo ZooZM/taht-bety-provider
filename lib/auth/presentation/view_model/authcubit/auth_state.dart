@@ -15,3 +15,8 @@ final class AuthFailure extends AuthState {
   final String message;
   AuthFailure(this.message);
 }
+
+final class AuthProviderAccountFailure extends AuthState {
+  final String email;
+  AuthProviderAccountFailure(this.email);
+}

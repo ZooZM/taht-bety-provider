@@ -17,7 +17,12 @@ class AuthCubit extends Cubit<AuthState> {
       password: password,
     );
     result.fold(
-      (failure) => emit(AuthFailure(failure.failurMsg)),
+      (failure) {
+        if (failure.failurMsg == email) {
+          return emit(AuthProviderAccountFailure(email));
+        }
+        return emit(AuthFailure(failure.failurMsg));
+      },
       (user) => emit(AuthSuccess(user)),
     );
   }
