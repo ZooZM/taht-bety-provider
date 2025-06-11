@@ -20,21 +20,21 @@ class CurUser extends HiveObject {
   @HiveField(7)
   String region;
   @HiveField(8)
-  int age;
+  int? age;
   @HiveField(9)
-  String gender;
+  String? gender;
   @HiveField(10)
-  DateTime verificationCodeExpiresAt;
+  DateTime? verificationCodeExpiresAt;
   @HiveField(11)
-  String idFrontSide;
+  String? idFrontSide;
   @HiveField(12)
-  String idBackSide;
+  String? idBackSide;
   @HiveField(13)
-  String isActive;
+  String? isActive;
   @HiveField(14)
-  String isOnline;
+  String? isOnline;
   @HiveField(15)
-  String type;
+  String? type;
 
   CurUser({
     required this.token,

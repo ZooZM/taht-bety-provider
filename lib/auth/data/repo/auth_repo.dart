@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:taht_bety_provider/auth/data/models/curuser.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
@@ -17,6 +20,8 @@ abstract class AuthRepo {
     required String gender,
     required String age,
     required String role,
+    required String phoneNumber,
+    required String type,
   });
 
   Future<void> signOut();
@@ -26,4 +31,8 @@ abstract class AuthRepo {
   Future<void> verifyEmail();
 
   Future<Either<Failure, CurUser>> fetchuser();
+
+  Future<Either<Failure, List<File>>> checkId(File frontImage, File backImage);
+
+  Future<Either<Failure, File>> createFaceID(File photo);
 }

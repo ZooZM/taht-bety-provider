@@ -175,6 +175,12 @@ class _SignInScreenState extends State<SignInScreen> {
                     BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) {
                         if (state is AuthFailure) {
+                          if (state.message
+                              .toLowerCase()
+                              .contains('verify your email')) {
+                            context.go(AppRouter.kVerifyCodeScreen,
+                                extra: _emailController.text);
+                          }
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(state.message),

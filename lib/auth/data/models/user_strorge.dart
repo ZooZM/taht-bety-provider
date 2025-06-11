@@ -99,6 +99,11 @@ class UserStorage {
     String? gender,
     DateTime? verificationCodeExpiresAt,
     List<String>? locations,
+    String? idFrontSide,
+    String? idBackSide,
+    String? isActive,
+    String? isOnline,
+    String? type,
   }) async {
     final user = getUserData();
     user.token = token ?? user.token;
@@ -113,6 +118,11 @@ class UserStorage {
     user.gender = gender ?? user.gender;
     user.verificationCodeExpiresAt =
         verificationCodeExpiresAt ?? user.verificationCodeExpiresAt;
+    user.idFrontSide = idFrontSide ?? user.idFrontSide;
+    user.idBackSide = idBackSide ?? user.idBackSide;
+    user.isActive = user.isActive ?? isActive;
+    user.isOnline = user.isOnline ?? isOnline;
+    user.type = user.type ?? type;
 
     await _box?.put(kCurUserBox, user);
   }

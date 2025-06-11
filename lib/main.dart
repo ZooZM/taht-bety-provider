@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taht_bety_provider/auth/data/repo/auth_repo_imp.dart';
 import 'package:taht_bety_provider/auth/presentation/view_model/authcubit/auth_cubit.dart';
-import 'package:taht_bety_provider/auth/presentation/view_model/cubit/image_upload_cubit_cubit.dart';
+import 'package:taht_bety_provider/auth/presentation/view_model/cubit/createprovider_cubit.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
 import 'package:taht_bety_provider/core/utils/bloc_observer.dart';
 import 'package:taht_bety_provider/core/utils/service_locator.dart';
@@ -25,17 +25,19 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          create: (context) => FetchProviderCubit(
+            getIt<ProviderProfileImpl>()..fetchProvider(),
+          ),
+        ),
+        BlocProvider(
           create: (context) => AuthCubit(
             getIt<AuthRepoImp>(),
           ),
         ),
         BlocProvider(
-          create: (context) => FetchProviderCubit(
-            getIt<ProviderProfileImpl>()..fetchProvider(),
+          create: (context) => CreateproviderCubit(
+            getIt<AuthRepoImp>(),
           ),
-        ),
-        BlocProvider<ImageUploadCubit>(
-          create: (context) => ImageUploadCubit(),
         ),
       ],
       child: MaterialApp.router(

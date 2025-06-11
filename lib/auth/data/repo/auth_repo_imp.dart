@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:taht_bety_provider/auth/data/models/curuser.dart';
@@ -5,6 +7,7 @@ import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/data/repo/auth_repo.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
 import 'package:taht_bety_provider/core/utils/api_service.dart';
+import 'package:taht_bety_provider/core/utils/app_fun.dart';
 
 class AuthRepoImp implements AuthRepo {
   final ApiService apiService;
@@ -109,6 +112,8 @@ class AuthRepoImp implements AuthRepo {
     required String gender,
     required String age,
     required String role,
+    required String phoneNumber,
+    required String type,
   }) async {
     try {
       final response = await apiService.post(
@@ -123,6 +128,8 @@ class AuthRepoImp implements AuthRepo {
           'age': age,
           'signUpPlatform': 'mobile',
           'role': role,
+          'phoneNumber': phoneNumber,
+          'type': type,
         },
       );
 
@@ -146,7 +153,7 @@ class AuthRepoImp implements AuthRepo {
           idBackSide: user.idBackSide,
           isActive: user.isActive,
           isOnline: user.isOnline,
-          type: user.type,
+          type: type,
         );
         return Right(response['message']);
       } else {
@@ -173,7 +180,9 @@ class AuthRepoImp implements AuthRepo {
       final user = UserStorage.getUserData();
       final response =
           await apiService.get(endPoint: 'users/me', token: user.token);
-      if (response['success']) {
+      final providerResponse = await apiService.get(
+          endPoint: 'provders/${user.userId}', token: user.token);
+      if (providerResponse['success']) {
         final userData = CurUser.fromJson(response['data']);
         return Right(userData);
       } else {
@@ -189,6 +198,69 @@ class AuthRepoImp implements AuthRepo {
         }
       }
       return Left(Serverfailure('Unknown error'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<File>>> checkId(
+      File frontImage, File backImage) async {
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(frontImage.path),
+        // 'backImage': await MultipartFile.fromFile(backImage.path),
+      });
+
+      final response = await Dio().post(
+        'https://e754-41-234-5-74.ngrok-free.app/predict',
+        data: formData,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.data['status'] == 'real') {
+          final listFiles = <File>[
+            frontImage,
+            backImage,
+          ];
+
+          return Right(listFiles);
+        } else if (response.data['status'] == 'fake') {
+          return Left(Serverfailure(response.data['process_results']
+                  ['final_result'] ??
+              'Failed to check ID'));
+        } else {
+          return Left(Serverfailure('Unknown status from server'));
+        }
+      } else {
+        return Left(
+            Serverfailure(response.data['message'] ?? 'Failed to check ID'));
+      }
+    } catch (e) {
+      return Left(Serverfailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, File>> createFaceID(File photo) async {
+    String errorMessage =
+        'An error occurred during create face ID, please try again or take clear photo';
+
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(photo.path),
+      });
+
+      final response = await Dio().post(
+        'https://fe60-41-234-5-74.ngrok-free.app/verify',
+        data: formData,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Right(photo);
+      } else {
+        return Left(Serverfailure(errorMessage));
+      }
+    } on DioException catch (e) {
+      return Left(Serverfailure(errorMessage));
     }
   }
 }

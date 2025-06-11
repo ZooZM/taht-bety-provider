@@ -53,6 +53,7 @@ dependencies:
   location: ^7.0.1
   location_platform_interface: ^5.0.0
   meta: ^1.15.0
+  path_provider: ^2.1.5
   shimmer: ^3.0.0
 
 dev_dependencies:
@@ -77,6 +78,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/icons/face.png
+    - assets/icons/center_face.png
     - assets/images/market_categories/
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -25,6 +25,7 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   String? _selectedGender;
   String? _selectedType;
 
@@ -35,6 +36,7 @@ class _SignupFormState extends State<SignupForm> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _ageController.dispose();
+    _phoneController.dispose(); // Dispose phone controller
     super.dispose();
   }
 
@@ -46,7 +48,7 @@ class _SignupFormState extends State<SignupForm> {
             password: _passwordController.text,
             confirmPassword: _confirmPasswordController.text,
             region: 'Cairo',
-            gender: _selectedGender ?? 'male',
+            gender: _selectedGender?.toLowerCase() ?? 'male',
             age: (_selectedType != null &&
                     !(_selectedType!.split('-')[0] == 'F' ||
                         _selectedType!.split('-')[0] == 'M' ||
@@ -54,6 +56,8 @@ class _SignupFormState extends State<SignupForm> {
                 ? _ageController.text
                 : '0',
             role: 'provider',
+            phoneNumber: _phoneController.text,
+            type: _selectedType!,
           );
     }
   }
@@ -65,6 +69,13 @@ class _SignupFormState extends State<SignupForm> {
         if (state is SignupSuccess) {
           context.go(AppRouter.kVerifyCodeScreen, extra: state.email);
         } else if (state is SignupFailure) {
+          if (state.errorMessage.toLowerCase().contains('already exists')) {
+            context.go(AppRouter.kVerifyCodeScreen,
+                extra: _emailController.text);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.errorMessage)),
+            );
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.errorMessage)),
           );
@@ -163,6 +174,28 @@ class _SignupFormState extends State<SignupForm> {
                   if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                       .hasMatch(value)) {
                     return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              // Phone Number Field
+              TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  prefixIcon: const Icon(Icons.phone),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  if (!RegExp(r'^\d{11}$').hasMatch(value)) {
+                    return 'Phone number must be exactly 11 digits';
                   }
                   return null;
                 },

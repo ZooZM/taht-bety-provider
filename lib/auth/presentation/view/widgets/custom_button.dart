@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/widgets/custom_circular_progress.dart';
 
 class CustomButton extends StatelessWidget {
@@ -18,8 +19,9 @@ class CustomButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        backgroundColor:
-            const Color(0xff3A4D6F), // Sets button background color
+        backgroundColor: isLoading
+            ? kGray
+            : const Color(0xff3A4D6F), // Sets button background color
         foregroundColor: Colors.white, // Ensures text color is set explicitly
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(32),

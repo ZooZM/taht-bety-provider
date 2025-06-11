@@ -1,12 +1,15 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/category_card.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_button.dart';
-import 'package:taht_bety_provider/auth/presentation/view_model/cubit/image_upload_cubit_cubit.dart';
+import 'package:taht_bety_provider/auth/presentation/view_model/cubit/createprovider_cubit.dart';
 import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/utils/app_fun.dart';
+import 'package:go_router/go_router.dart';
+import 'package:taht_bety_provider/core/utils/app_router.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';
 import 'package:taht_bety_provider/data.dart';
 
@@ -21,11 +24,15 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
   String? _selectedType;
   File? _frontImage;
   File? _backImage;
+  bool _isLoading = false;
 
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(bool isFront) async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.rear,
+    );
     if (pickedFile != null) {
       setState(() {
         if (isFront) {
@@ -37,29 +44,71 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
     }
   }
 
-  Future<void> _uploadImage() async {
+  Future<bool> _saveIdImageAndType() async {
     try {
-      final formData = FormData.fromMap({
-        'file': _frontImage,
-      });
-
-      final response = await Dio().post(
-        'https://example.com/upload',
-        data: formData,
+      String base64 = await AppFun.imageToBase64(_frontImage!);
+      String backBase64 = '';
+      if (_backImage != null) {
+        backBase64 = await AppFun.imageToBase64(_backImage!);
+      }
+      UserStorage.updateUserData(
+        idFrontSide: base64,
+        idBackSide: backBase64,
+        type: _selectedType,
       );
+      return true;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload image: $e')),
+        SnackBar(content: Text('Failed to save image: $e')),
       );
+      return false;
+    }
+  }
+
+  bool needId() {
+    if (_selectedType == null) {
+      return false;
+    } else {
+      String type = _selectedType!.split('-')[0].toUpperCase();
+      if (type == 'R' || type == 'HW') {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ImageUploadCubit(),
-      child: Scaffold(
-        body: SafeArea(
+    return Scaffold(
+      body: SafeArea(
+        child: BlocListener<CreateproviderCubit, CreateproviderState>(
+          listener: (context, state) async {
+            if (state is CheckIdSuccess) {
+              setState(() {
+                _isLoading = false;
+              });
+              bool success = await _saveIdImageAndType();
+              if (success) {
+                context.push(AppRouter.kTakeSelfie);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Failed to save ID images')),
+                );
+              }
+            } else if (state is CheckIdFailure) {
+              setState(() {
+                _isLoading = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            } else if (state is CheckIdLoading) {
+              setState(() {
+                _isLoading = true;
+              });
+            }
+          },
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
@@ -77,7 +126,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  "Fill your information below or register\nwith your social account",
+                  "Please fill in your information below.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -137,120 +186,36 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
                   },
                   icon: const Icon(Icons.arrow_drop_down, color: kPrimaryColor),
                 ),
-                const SizedBox(height: 20),
-
-                // ID Card Front Side
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "ID Card Front Side",
-                      style: Styles.subtitle16Bold.copyWith(
-                        color: ksecondryColor,
-                        fontSize: 14,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.upload_file,
-                          color: ksecondryColor, size: 20),
-                      onPressed: () => _pickImage(true),
-                    ),
-                  ],
-                ),
-                if (_frontImage != null)
-                  Image.file(
-                    _frontImage!,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
-                BlocConsumer<ImageUploadCubit, ImageUploadState>(
-                  listener: (context, state) {
-                    if (state is ImageUploadedSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Front image uploaded!')),
-                      );
-                    } else if (state is ImageUploadError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.msg)),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is ImageUploading) {
-                      return const CircularProgressIndicator();
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-
-                // ID Card Back Side
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "ID Card Back Side",
-                      style: Styles.subtitle16Bold.copyWith(
-                        color: ksecondryColor,
-                        fontSize: 14,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.upload_file,
-                          color: ksecondryColor, size: 20),
-                      onPressed: () => _pickImage(false),
-                    ),
-                  ],
-                ),
-                if (_backImage != null)
-                  Image.file(
-                    _backImage!,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
-                BlocConsumer<ImageUploadCubit, ImageUploadState>(
-                  listener: (context, state) {
-                    if (state is ImageUploadedSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Back image uploaded!')),
-                      );
-                    } else if (state is ImageUploadError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.msg)),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is ImageUploading) {
-                      return const CircularProgressIndicator();
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-
+                // const SizedBox(height: 20),
+                if (_selectedType != null) buildIDWidgets(),
                 // Create Account Button
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: CustomButton(
                     text: "Next",
                     onPressed: () {
-                      if (_frontImage != null &&
-                          _backImage != null &&
-                          _selectedType != null) {
-                        context
-                            .read<ImageUploadCubit>()
-                            .uploadImage(_frontImage!);
-                      } else {
+                      if (_selectedType == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                                'Please upload both images and choose a type'),
+                            content: Text('Please select your Type'),
                           ),
                         );
+                        return;
+                      } else if (_frontImage == null || _backImage == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please upload both ID images'),
+                          ),
+                        );
+                        return;
+                      } else {
+                        context.read<CreateproviderCubit>().checkID(
+                              _frontImage!,
+                              _backImage!,
+                            );
                       }
                     },
-                    isLoading: false,
+                    isLoading: _isLoading,
                   ),
                 ),
               ],
@@ -258,6 +223,67 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildIDWidgets() {
+    return Column(
+      children: [
+        // ID Card Front Side
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              needId()
+                  ? "ID Card Front Side"
+                  : "Please take a image for your work",
+              style: Styles.subtitle16Bold.copyWith(
+                color: ksecondryColor,
+                fontSize: 14,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.upload_file,
+                  color: ksecondryColor, size: 20),
+              onPressed: () => _pickImage(true),
+            ),
+          ],
+        ),
+        if (_frontImage != null)
+          Image.file(
+            _frontImage!,
+            height: 100,
+            width: 100,
+            fit: BoxFit.fill,
+          ),
+
+        // ID Card Back Side
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              needId() ? "ID Card Back Side" : "Please take a different image",
+              style: Styles.subtitle16Bold.copyWith(
+                color: ksecondryColor,
+                fontSize: 14,
+              ),
+              softWrap: true,
+            ),
+            IconButton(
+              icon: const Icon(Icons.upload_file,
+                  color: ksecondryColor, size: 20),
+              onPressed: () => _pickImage(false),
+            ),
+          ],
+        ),
+        if (_backImage != null)
+          Image.file(
+            _backImage!,
+            height: 100,
+            width: 100,
+            fit: BoxFit.cover,
+          ),
+      ],
     );
   }
 }

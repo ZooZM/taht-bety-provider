@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/utils/app_router.dart';
 
 class VerifyCodeScreen extends StatefulWidget {
   const VerifyCodeScreen({super.key});
@@ -75,7 +76,17 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         },
       );
 
-      if (response.statusCode == 200) {}
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Verification successful!')),
+        );
+        context.go(AppRouter.kCreateProviderAccount);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Verification failed. Please try again.')),
+        );
+      }
     } on DioException catch (e) {
       String errorMessage = 'Verification failed. Please try again.';
       if (e.response != null && e.response!.data is Map<String, dynamic>) {
