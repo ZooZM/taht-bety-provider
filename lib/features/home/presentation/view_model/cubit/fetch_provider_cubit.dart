@@ -5,8 +5,8 @@ import 'package:taht_bety_provider/features/home/data/repos/provider_profile_rep
 
 part 'fetch_provider_state.dart';
 
-class FetchProviderCubit extends Cubit<FetchProviderState> {
-  FetchProviderCubit(this.providerProfileRepo) : super(FetchProviderInitial());
+class ProviderCubit extends Cubit<ProviderState> {
+  ProviderCubit(this.providerProfileRepo) : super(ProviderInitial());
   ProviderProfileRepo providerProfileRepo;
   Future<void> fetchProvider() async {
     emit(FetchProviderLoading());

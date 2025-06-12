@@ -189,12 +189,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           );
                         } else if (state is AuthSuccess) {
                           context.go(AppRouter.kHomePage);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Sign in successful!"),
-                              duration: Duration(seconds: 3),
-                            ),
-                          );
                         } else if (state is AuthProviderAccountFailure) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

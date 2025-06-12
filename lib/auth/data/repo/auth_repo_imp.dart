@@ -60,22 +60,22 @@ class AuthRepoImp implements AuthRepo {
           isOnline: user.isOnline,
           type: user.type,
         );
-        try {
-          final response =
-              await apiService.get(endPoint: 'providers/${user.userId}');
-          if (response['success']) {
-            final providerData = response['data'];
-            user.idFrontSide = providerData['id'][0];
-            user.idBackSide = providerData['id'][1] ?? '';
-            user.isActive = providerData['isActive'];
-            user.isOnline = providerData['isOnline'];
-            user.type = providerData['providerType'];
-          } else {
-            return Left(Serverfailure(response['message']));
-          }
-        } catch (e) {
-          return Left(Serverfailure(user.email));
-        }
+        // try {
+        //   final response =
+        //       await apiService.get(endPoint: 'providers/${user.userId}');
+        //   if (response['success']) {
+        //     final providerData = response['data'];
+        //     user.idFrontSide = providerData['id'][0];
+        //     user.idBackSide = providerData['id'][1] ?? '';
+        //     user.isActive = providerData['isActive'];
+        //     user.isOnline = providerData['isOnline'];
+        //     user.type = providerData['providerType'];
+        //   } else {
+        //     return Left(Serverfailure(response['message']));
+        //   }
+        // } catch (e) {
+        //   return Left(Serverfailure(user.email));
+        // }
         return Right(user);
       } else {
         return Left(Serverfailure('Failed to sign in'));

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppFun {
@@ -51,5 +52,19 @@ class AppFun {
     final file = File(filePath);
     await file.writeAsBytes(bytes);
     return file;
+  }
+
+  static Future<File> pickImage({required ImageSource imageSource}) async {
+    final ImagePicker picker = ImagePicker();
+
+    final pickedFile = await picker.pickImage(
+      source: imageSource,
+    );
+    if (pickedFile != null) {
+      final file = File(pickedFile.path);
+      return file;
+    } else {
+      throw Exception('No image selected');
+    }
   }
 }

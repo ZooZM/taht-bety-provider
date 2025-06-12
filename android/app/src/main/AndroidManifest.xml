@@ -7,7 +7,10 @@
     <application
         android:label="taht_bety_provider"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+               >
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBKxRrZ4PuAC8fvWcI81iEnvakt3by3HA0"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -5,22 +5,23 @@ import 'package:taht_bety_provider/core/utils/styles.dart';
 class ServProfileRate extends StatelessWidget {
   const ServProfileRate({
     super.key,
+    required this.rate,
   });
-
+  final double rate;
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       children: [
-        Icon(
+        const Icon(
           FontAwesomeIcons.solidStar,
           color: Color(0xFFFF9633),
           size: 20,
         ),
-        SizedBox(
+        const SizedBox(
           width: 6,
         ),
         Text(
-          "4.9 ",
+          "$rate ",
           style: Styles.text14Medium,
         ),
       ],

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:shimmer/shimmer.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/back_button_circle.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_title.dart';
@@ -19,10 +18,8 @@ class TakeSelfieScreen extends StatefulWidget {
 
 class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
   CameraController? _controller;
-  bool _canFinish = false;
   bool _isLoading = true;
   String? _errorMessage;
-  File? _capturedImage;
 
   @override
   void initState() {
@@ -72,9 +69,7 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
               });
             } else if (state is CreateFaceIdSuccess) {
               setState(() {
-                _capturedImage = state.faceId;
                 _isLoading = false;
-                _canFinish = true;
                 _errorMessage = 'true';
               });
             } else if (state is CreateFaceIdFailure) {

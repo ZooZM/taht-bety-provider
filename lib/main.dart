@@ -8,6 +8,7 @@ import 'package:taht_bety_provider/core/utils/bloc_observer.dart';
 import 'package:taht_bety_provider/core/utils/service_locator.dart';
 import 'package:taht_bety_provider/features/home/data/repos/provider_profile_impl.dart';
 import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/fetch_provider_cubit.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +26,13 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => FetchProviderCubit(
-            getIt<ProviderProfileImpl>()..fetchProvider(),
+          create: (context) => ProviderCubit(
+            getIt<ProviderProfileImpl>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => UpdateProviderCubit(
+            getIt<ProviderProfileImpl>(),
           ),
         ),
         BlocProvider(

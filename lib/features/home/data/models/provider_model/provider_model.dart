@@ -24,8 +24,8 @@ class ProviderModel {
   String? name;
   String? email;
   String? photo;
-  double? distance; // إضافة distance
-
+  double? distance;
+  double? avgRating;
   ProviderModel({
     this.providerId,
     this.providerType,
@@ -48,7 +48,8 @@ class ProviderModel {
     this.name,
     this.email,
     this.photo,
-    this.distance, // إضافة distance إلى الـ Constructor
+    this.distance,
+    this.avgRating,
   });
 
   ProviderModel copyWith({
@@ -73,7 +74,8 @@ class ProviderModel {
     String? name,
     String? email,
     String? photo,
-    double? distance, // إضافة distance هنا أيضًا
+    double? distance,
+    double? avgRating,
   }) {
     return ProviderModel(
       providerId: providerId ?? this.providerId,
@@ -99,14 +101,13 @@ class ProviderModel {
       name: name ?? this.name,
       email: email ?? this.email,
       photo: photo ?? this.photo,
-      distance: distance ?? this.distance, // تعيين distance
+      distance: distance ?? this.distance,
+      avgRating: avgRating ?? this.avgRating,
     );
   }
 
   factory ProviderModel.fromJson(Map<String, dynamic> json) => ProviderModel(
-        providerId: json['providerID'] is Map<String, dynamic>
-            ? json['providerID']['_id'] as String?
-            : json['providerID'] as String?,
+        providerId: json['_id'] as String?,
         name: json['providerID'] is Map<String, dynamic>
             ? json['providerID']['name'] as String?
             : null,
@@ -152,6 +153,7 @@ class ProviderModel {
             ? json['providerID']['photo'] as String?
             : null,
         distance: (json['distance'] as num?)?.toDouble(),
+        avgRating: (json['avgRating'] as num?)?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -176,6 +178,7 @@ class ProviderModel {
         'name': name,
         'email': email,
         'photo': photo,
-        'distance': distance, // إضافة distance
+        'distance': distance,
+        'avgRating': avgRating,
       };
 }

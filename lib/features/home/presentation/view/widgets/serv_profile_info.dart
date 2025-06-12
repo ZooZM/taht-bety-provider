@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_profile_rate.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 class ServProfileInfo extends StatelessWidget {
-  const ServProfileInfo({super.key, required this.name, required this.address});
+  const ServProfileInfo(
+      {super.key,
+      required this.name,
+      required this.address,
+      required this.rate});
   final String name;
   final String address;
+  final double rate;
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeader(),
+        _buildHeader(context),
         const SizedBox(height: 4),
         _buildLocationRow(),
       ],
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -32,8 +39,49 @@ class ServProfileInfo extends StatelessWidget {
             softWrap: true,
           ),
         ),
+        IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  final TextEditingController _nameController =
+                      TextEditingController(text: name);
+                  return AlertDialog(
+                    title: const Text('Edit Name'),
+                    content: TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(_nameController.text);
+                          BlocProvider.of<UpdateProviderCubit>(context)
+                              .updateProviderName(name);
+                        },
+                        child: const Text('Edit'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: const Icon(
+              Icons.edit_outlined,
+              color: ksecondryColor,
+            )),
+        const Text('Edit', style: Styles.text14Light),
+        const Spacer(),
         const SizedBox(width: 12),
-        const ServProfileRate(),
+        ServProfileRate(
+          rate: rate,
+        ),
       ],
     );
   }

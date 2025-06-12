@@ -193,7 +193,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
                   padding: const EdgeInsets.symmetric(vertical: 32),
                   child: CustomButton(
                     text: "Next",
-                    onPressed: () {
+                    onPressed: () async {
                       if (_selectedType == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -204,15 +204,18 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
                       } else if (_frontImage == null || _backImage == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Please upload both ID images'),
+                            content: Text('Please upload both images'),
                           ),
                         );
                         return;
-                      } else {
+                      } else if (needId()) {
                         context.read<CreateproviderCubit>().checkID(
                               _frontImage!,
                               _backImage!,
                             );
+                      } else {
+                        await _saveIdImageAndType();
+                        context.push(AppRouter.kMaps);
                       }
                     },
                     isLoading: _isLoading,

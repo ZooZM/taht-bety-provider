@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:taht_bety_provider/core/utils/app_router.dart';
-import 'package:taht_bety_provider/core/utils/styles.dart';
-import 'package:taht_bety_provider/features/home/presentation/view/widgets/notification_icon.dart';
+import 'package:taht_bety_provider/features/home/presentation/view/widgets/upper_widget_loading.dart';
 import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/fetch_provider_cubit.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/service_profile_body_f.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/service_profile_body_m.dart';
@@ -18,10 +15,11 @@ class ServiceProfile extends StatefulWidget {
 
 class _ServiceProfileState extends State<ServiceProfile> {
   Future<void> reloadPage(BuildContext context) async {
-    await context.read<FetchProviderCubit>().fetchProvider();
+    await context.read<ProviderCubit>().fetchProvider();
     await Future.delayed(const Duration(seconds: 1));
   }
 
+  String selected = 'Offline';
   @override
   void initState() {
     reloadPage(context);
@@ -36,37 +34,11 @@ class _ServiceProfileState extends State<ServiceProfile> {
           onRefresh: () => reloadPage(context),
           child: Column(
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Ta7t Bety',
-                      style: Styles.projectNameStyle,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        context.go(AppRouter.kNotification);
-                      },
-                      child: const NotificationIcon(),
-                    ),
-                  ],
-                ),
-              ),
               Expanded(
-                child: BlocBuilder<FetchProviderCubit, FetchProviderState>(
+                child: BlocBuilder<ProviderCubit, ProviderState>(
                   builder: (context, state) {
                     if (state is FetchProviderLoading) {
-                      return ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: const [
-                          Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ],
-                      );
+                      return const UpperWidgetLoading();
                     } else if (state is FetchProviderFailure) {
                       return ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
