@@ -1,31 +1,45 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
+import 'package:taht_bety_provider/features/home/data/models/provider_model/post.dart';
 
 import '../../../../../auth/presentation/view/widgets/back_button_circle.dart';
-import '../widgets/labled_field.dart';
 import '../../view_model/product_cubit/product_cubit.dart';
-
+import '../widgets/labled_field.dart';
 
 class UpdateProductF extends StatefulWidget {
-  UpdateProductF({super.key});
-
+  UpdateProductF({
+    Key? key,
+     this.post,
+  }) : super(key: key);
+  final Post? post;
   @override
   State<UpdateProductF> createState() => _UpdateProductFState();
 }
 
 class _UpdateProductFState extends State<UpdateProductF> {
-  List<File> images = [];
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
 
-
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController priceController = TextEditingController();
+    List<File>? images;
+    @override
+    void initState() {
+      super.initState();
+      if (widget.post != null) {
+        nameController.text = widget.post!.title ?? '';
+        descriptionController.text = widget.post!.content ?? '';
+        priceController.text = widget.post!.price?.toString() ?? '';
+        images = widget.post!.images?.map((e) => File(e)).toList() ?? [];
+      }
+    }
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -65,7 +79,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
                   height: screenWidth * 0.25,
                   child: ListView.builder(
                     itemBuilder: (context, index) {
-                      if (index < images.length) {
+                      if (index < images!.length) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
@@ -86,7 +100,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
                                     decoration: const BoxDecoration(
                                         shape: BoxShape.circle),
                                     child: Image.file(
-                                      images[index],
+                                      images![index],
                                       fit: BoxFit.cover,
                                     )),
                               )),
@@ -120,7 +134,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
                                 )));
                       }
                     },
-                    itemCount: images.length + 1,
+                    itemCount: images!.length + 1,
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                   ),
@@ -195,21 +209,22 @@ class _UpdateProductFState extends State<UpdateProductF> {
                   height: 60,
                   child: ElevatedButton(
                     onPressed: () {
-               
-
-                      if (nameController.text.isEmpty || descriptionController.text.isEmpty || priceController.text.isEmpty) {
+                      if (nameController.text.isEmpty ||
+                          descriptionController.text.isEmpty ||
+                          priceController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please fill all fields')),
+                          const SnackBar(
+                              content: Text('Please fill all fields')),
                         );
                         return;
                       }
 
                       context.read<ProductCubit>().addProduct(
-                        title: nameController.text,
-                        content: descriptionController.text,
-                        price: double.tryParse(priceController.text) ?? 0.0,
-                        images: images,
-                      );
+                            title: nameController.text,
+                            content: descriptionController.text,
+                            price: double.tryParse(priceController.text) ?? 0.0,
+                            images: images!,
+                          );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF3A4D6F),
@@ -248,7 +263,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
     try {
       final image = await AppFun.pickImage(imageSource: ImageSource.gallery);
 
-      images.add(image);
+      images!.add(image);
       setState(() {});
     } catch (e) {
       // Handle any errors that occur during image picking

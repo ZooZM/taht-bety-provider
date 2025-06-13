@@ -97,15 +97,15 @@ abstract class AppRouter {
     ),
     GoRoute(
       path: kUpdateProductM,
-      builder: (context, state) => const UpdateProductM(),
+      builder: (context, state) =>  UpdateProductM(),
     ),
     GoRoute(
       path: kUpdateProductHC,
-      builder: (context, state) => const UpdateProductHc(),
+      builder: (context, state) =>  UpdateProductHc(),
     ),
     GoRoute(
       path: kUpdateProductR,
-      builder: (context, state) => const UpdateProductR(),
+      builder: (context, state) =>  UpdateProductR(),
       )
   ]);
 }
