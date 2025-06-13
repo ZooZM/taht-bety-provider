@@ -72,7 +72,9 @@ class _CategoryDetailsBodyState extends State<CategoryDetailsBody> {
                   style: Styles.subtitle18Bold,
                 ),
                 const Spacer(),
-                const AddIcon(title: 'Add Items'),
+                AddIcon(title: 'Add Items', onTap: () {
+                  context.push(AppRouter.kAddProductM);
+                }),
               ],
             ),
           ),

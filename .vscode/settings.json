@@ -1,3 +1,10 @@
 {
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "cSpell.words": [
+        "Alaa",
+        "consectetur",
+        "createprovider",
+        "Serverfailure",
+        "strorge"
+    ]
 }

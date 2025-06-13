@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../chat/presentation/view/list_chats_screen.dart';
+
 class Chats extends StatelessWidget {
   const Chats({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chats'),
-      ),
-      body: const Center(
-        child: Text(
-          'Welcome to the Chats page!',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
+    return const Scaffold(
+      body: ListChatsScreen()
     );
   }
 }
