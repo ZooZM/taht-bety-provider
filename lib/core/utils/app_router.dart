@@ -17,7 +17,7 @@ import '../../features/handle_product/presentation/view/screens/update_product_f
 import '../../features/handle_product/presentation/view/screens/update_product_hc.dart';
 import '../../features/handle_product/presentation/view/screens/update_product_m.dart';
 import '../../features/handle_product/presentation/view/screens/update_product_r.dart';
-import '../../features/orders/presentation/order_details_screen.dart';
+import '../../features/orders/presentation/view/order_details_screen.dart';
 import '../../features/orders/presentation/view/order_screen.dart';
 import '../../features/payment/presentation/view/person_details.dart';
 
@@ -82,9 +82,9 @@ abstract class AppRouter {
       path: kFinishCreateProvider,
       builder: (context, state) => const FinishCreateProvider(),
     ),
-        GoRoute(
+    GoRoute(
       path: kAddProductF,
-      builder: (context, state) =>  AddProductF(),
+      builder: (context, state) => AddProductF(),
     ),
     GoRoute(
       path: kAddProductM,
@@ -100,41 +100,41 @@ abstract class AppRouter {
     ),
     GoRoute(
       path: kUpdateProductF,
-      builder: (context, state) =>  UpdateProductF(),
+      builder: (context, state) => UpdateProductF(),
     ),
     GoRoute(
       path: kUpdateProductM,
-      builder: (context, state) =>  UpdateProductM(),
+      builder: (context, state) => UpdateProductM(),
     ),
     GoRoute(
       path: kUpdateProductHC,
-      builder: (context, state) =>  UpdateProductHc(),
+      builder: (context, state) => UpdateProductHc(),
     ),
     GoRoute(
       path: kUpdateProductR,
-      builder: (context, state) =>  UpdateProductR(),
-      ),
+      builder: (context, state) => UpdateProductR(),
+    ),
     GoRoute(
       path: kOrdersScreen,
       builder: (context, state) => const OrdersScreen(),
     ),
     GoRoute(
-  path: kOrderDetails,
-  builder: (context, state) {
-    final extra = state.extra as Map<String, dynamic>;
-    return OrderDetailsScreen(
-      orderNumber: extra['orderNumber'],
-      name: extra['name'],
-      phone: extra['phone'],
-      address: extra['address'],
-      items: extra['items'],
-    );
-  },
-),
-GoRoute(
-  path: kPersonDetails,
-  builder: (context, state) => const PersonDetailsScreen(),
-),
-
+      path: kOrderDetails,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return OrderDetailsScreen(
+          orderNumber: extra['orderNumber'],
+          name: extra['name'],
+          phone: extra['phone'],
+          address: extra['address'],
+          items: extra['items'],
+          description: extra['des'],
+        );
+      },
+    ),
+    GoRoute(
+      path: kPersonDetails,
+      builder: (context, state) => const PersonDetailsScreen(),
+    ),
   ]);
 }

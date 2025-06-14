@@ -133,17 +133,14 @@ class DashboardScreen extends StatelessWidget {
                       ...groupedTransactions.entries.expand((entry) {
                         return [
                           Flexible(
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: height * 0.01),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  entry.key,
-                                  style: TextStyle(
-                                    fontSize: width * 0.038,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF15243F),
-                                  ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                entry.key,
+                                style: TextStyle(
+                                  fontSize: width * 0.038,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF15243F),
                                 ),
                               ),
                             ),
@@ -155,7 +152,6 @@ class DashboardScreen extends StatelessWidget {
                               )),
                         ];
                       }),
-                      SizedBox(height: height * 0.015),
                       InkWell(
                         onTap: () {
                           Navigator.push(
@@ -222,52 +218,48 @@ class TransactionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: spacing * 0.5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: spacing * 0.5,
-                backgroundColor: const Color(0xFFE5EAF2),
-                child:
-                    Icon(item.icon, size: fontSize, color: Color(0xFF3A4D6F)),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              radius: spacing * 0.5,
+              backgroundColor: const Color(0xFFE5EAF2),
+              child: Icon(item.icon,
+                  size: fontSize, color: const Color(0xFF3A4D6F)),
+            ),
+            Text(
+              item.label,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF15243F),
               ),
-              SizedBox(width: spacing * 0.6),
-              Text(
-                item.label,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF15243F),
-                ),
+            ),
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              item.amount,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF15243F),
               ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                item.amount,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF15243F),
-                ),
+            ),
+            Text(
+              item.time,
+              style: TextStyle(
+                fontSize: fontSize * 0.95,
+                color: const Color(0xFF99A8C2),
               ),
-              Text(
-                item.time,
-                style: TextStyle(
-                  fontSize: fontSize * 0.95,
-                  color: const Color(0xFF99A8C2),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

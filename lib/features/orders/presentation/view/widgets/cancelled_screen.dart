@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taht_bety_provider/features/orders/data/models/order_model/order_model.dart';
 import 'order_card.dart';
 
 class CancelledOrdersScreen extends StatelessWidget {
-  const CancelledOrdersScreen({super.key});
-
+  const CancelledOrdersScreen({super.key, required this.orders});
+  final List<OrderModel> orders;
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -11,15 +12,15 @@ class CancelledOrdersScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: height * 0.019),
       child: ListView.builder(
-        itemCount: 1,
+        itemCount: orders.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: EdgeInsets.symmetric(vertical: height * 0.0059),
             child: OrderCard(
-              orderNumber: '922529',
-              date: 'April, 06',
-              address: 'New Cairo, Cairo',
-              mode: OrderCardMode.cancelled, // ✅ No buttons, just address/date/order
+              order: orders[index],
+
+              mode: OrderCardMode
+                  .cancelled, // ✅ No buttons, just address/date/order
             ),
           );
         },

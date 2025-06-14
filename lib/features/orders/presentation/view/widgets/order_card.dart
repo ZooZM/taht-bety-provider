@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taht_bety_provider/features/orders/data/models/order_model/order_model.dart';
 
 import '../../../../../core/utils/app_router.dart';
-import '../../order_details_screen.dart';
 
 enum OrderCardMode {
   pending,
@@ -12,25 +12,17 @@ enum OrderCardMode {
 }
 
 class OrderCard extends StatelessWidget {
-  final String orderNumber;
-  final String date;
-  final String address;
-  final int? itemCount;
-  final double? totalAmount;
+  final OrderModel order;
   final OrderCardMode mode;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
 
   const OrderCard({
     super.key,
-    required this.orderNumber,
-    required this.date,
-    required this.address,
-    this.itemCount,
-    this.totalAmount,
     required this.mode,
     this.onAccept,
     this.onReject,
+    required this.order,
   });
 
   @override
@@ -45,24 +37,12 @@ class OrderCard extends StatelessWidget {
         context.push(
           AppRouter.kOrderDetails,
           extra: {
-            'orderNumber': '922529',
-            'name': 'Alaa Khalid',
+            'orderNumber': order.id,
+            'name': order.userId?.name ?? '',
             'phone': '+201118941774',
             'address': 'New Cairo, Cairo',
-            'items': [
-              OrderItem(
-                  name: 'Almarai plain milk 1L', quantity: 1, price: 76.50),
-              OrderItem(
-                  name: 'Almarai plain milk 1L', quantity: 2, price: 76.50),
-              OrderItem(
-                  name: 'Almarai plain milk 1L', quantity: 1, price: 76.50),
-              OrderItem(
-                  name: 'Almarai plain milk 1L', quantity: 1, price: 76.50),
-              OrderItem(
-                  name: 'Almarai plain milk 1L', quantity: 1, price: 76.50),
-              OrderItem(
-                  name: 'Almarai plain milk 1L', quantity: 1, price: 76.50),
-            ],
+            'items': order.postId,
+            'des': order.description,
           },
         );
       },
@@ -83,7 +63,7 @@ class OrderCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Order #$orderNumber',
+                      'Order #${order.id ?? ''}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
@@ -93,7 +73,7 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    date,
+                    'date',
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -110,7 +90,7 @@ class OrderCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      'Address: $address',
+                      'Address: address',
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -121,24 +101,24 @@ class OrderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              if (itemCount != null)
-                Text(
-                  'Num of items: $itemCount items',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    color: Color(0xFF3A4D6F),
-                  ),
+
+              Text(
+                'Num of items: ${order.postId?.length ?? ''} items',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF3A4D6F),
                 ),
-              if (totalAmount != null)
-                Text(
-                  'Total: ${totalAmount!.toStringAsFixed(0)} EGP',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    color: Color(0xFF3A4D6F),
-                  ),
+              ),
+
+              Text(
+                'Total: ${order.price} EGP',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF3A4D6F),
                 ),
+              ),
               if (showActions)
                 Padding(
                   padding: const EdgeInsets.only(top: 10),

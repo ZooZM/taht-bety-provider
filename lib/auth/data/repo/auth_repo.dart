@@ -2,7 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:taht_bety_provider/auth/data/models/curuser.dart';
+import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
 
 abstract class AuthRepo {

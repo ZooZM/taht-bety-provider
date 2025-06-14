@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../auth/presentation/view/widgets/back_button_circle.dart';
+import 'package:taht_bety_provider/core/utils/styles.dart';
+import 'package:taht_bety_provider/features/home/data/models/provider_model/post.dart';
+import '../../../../auth/presentation/view/widgets/back_button_circle.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class OrderDetailsScreen extends StatefulWidget {
   final String orderNumber;
   final String name;
   final String phone;
   final String address;
-  final List<OrderItem> items;
+  final List<Post> items;
+  final String description;
 
   const OrderDetailsScreen({
     super.key,
@@ -15,11 +18,40 @@ class OrderDetailsScreen extends StatelessWidget {
     required this.phone,
     required this.address,
     required this.items,
+    required this.description,
   });
 
   @override
+  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
+}
+
+class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
+  final List<Map<String, int>> preparedItems = [];
+
+  void prepareItems() {
+    final Map<String, int> quantityMap = {};
+    for (var post in widget.items) {
+      final id = post.id ?? '';
+      if (quantityMap.containsKey(id)) {
+        quantityMap[id] = quantityMap[id]! + 1;
+      } else {
+        quantityMap[id] = 1;
+      }
+    }
+    preparedItems.clear();
+    preparedItems.addAll(quantityMap.entries.map((e) => {e.key: e.value}));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    prepareItems();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final total = items.fold(0.0, (sum, i) => sum + i.price * i.quantity);
+    final total =
+        widget.items.fold(0.0, (sum, item) => sum + (item.price ?? 0));
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
@@ -37,7 +69,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Order #$orderNumber',
+                      'Order #${widget.orderNumber}',
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: width * 0.045,
@@ -50,38 +82,41 @@ class OrderDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             SizedBox(height: height * 0.02),
-
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * 0.05),
                 child: ListView(
                   children: [
-                    _buildInfoRow('Name :', name, width),
+                    _buildInfoRow('Name :', widget.name, width),
                     SizedBox(height: height * 0.01),
-                    _buildInfoRow('Phone Number :', phone, width),
+                    _buildInfoRow('Phone Number :', widget.phone, width),
                     SizedBox(height: height * 0.01),
-                    _buildInfoRow('Address :', address, width),
+                    _buildInfoRow('Address :', widget.address, width),
                     SizedBox(height: height * 0.02),
                     const Divider(color: Color(0xFFCFD9E9), height: 1),
                     SizedBox(height: height * 0.02),
-
-                    // Items list
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: items.length,
+                      itemCount: preparedItems.length,
                       separatorBuilder: (_, __) =>
                           SizedBox(height: height * 0.012),
                       itemBuilder: (_, idx) {
-                        final item = items[idx];
+                        final item = preparedItems[idx];
+                        final postId = item.keys.first;
+                        final quantity = item.values.first;
+                        final post = widget.items.firstWhere(
+                          (e) => e.id == postId,
+                          orElse: () => Post(title: '', price: 0),
+                        );
+
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: Text(
-                                item.name,
+                                '${post.title} x $quantity',
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: width * 0.038,
@@ -90,41 +125,35 @@ class OrderDetailsScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'x${item.quantity}',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: width * 0.038,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF15243F),
-                                  ),
-                                ),
-                                SizedBox(width: width * 0.04),
-                                Text(
-                                  item.price.toStringAsFixed(2),
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: width * 0.038,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF15243F),
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              '${(post.price ?? 0) * quantity} EGP',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: width * 0.038,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF15243F),
+                              ),
                             ),
                           ],
                         );
                       },
                     ),
-                    SizedBox(height: height * 0.1), // Space for total bar
+                    SizedBox(height: height * 0.1),
+                    const Text(
+                      "Description",
+                      style: Styles.subtitle18Bold,
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      '   ${widget.description}',
+                      style: Styles.text14Medium,
+                    )
                   ],
                 ),
               ),
             ),
-
-            // Total Bar
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
@@ -187,16 +216,4 @@ class OrderDetailsScreen extends StatelessWidget {
       ],
     );
   }
-}
-
-class OrderItem {
-  final String name;
-  final int quantity;
-  final double price;
-
-  OrderItem({
-    required this.name,
-    required this.quantity,
-    required this.price,
-  });
 }

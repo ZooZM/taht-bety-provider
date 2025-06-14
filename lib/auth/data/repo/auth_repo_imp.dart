@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:taht_bety_provider/auth/data/models/curuser.dart';
+import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
 import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/data/repo/auth_repo.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';

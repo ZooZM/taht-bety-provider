@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'curuser.dart';
+part of 'provider_curuser.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

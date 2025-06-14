@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:taht_bety_provider/auth/data/models/curuser.dart';
+import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
 import 'package:taht_bety_provider/auth/data/repo/auth_repo.dart';
 
 part 'auth_state.dart';

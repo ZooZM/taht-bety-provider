@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:taht_bety_provider/auth/data/models/curuser.dart';
+import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
 import 'package:taht_bety_provider/constants.dart';
 
 class UserStorage {

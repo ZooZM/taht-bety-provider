@@ -57,56 +57,49 @@ class TransactionsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: width * 0.06,
-            vertical: height * 0.02,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  const BackButtonCircle(),
-                  SizedBox(width: width * 0.04),
-                  Text(
-                    "Transactions",
-                    style: TextStyle(
-                      fontSize: width * 0.045,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF15243F),
-                    ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                const BackButtonCircle(),
+                SizedBox(width: width * 0.04),
+                Text(
+                  "Transactions",
+                  style: TextStyle(
+                    fontSize: width * 0.045,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF15243F),
                   ),
-                ],
-              ),
-              SizedBox(height: height * 0.02),
+                ),
+              ],
+            ),
 
-              // Transactions
-              Expanded(
-                child: ListView(
-                  children: fullTransactions.entries.expand((entry) {
-                    return [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: height * 0.005),
-                        child: Text(
-                          entry.key,
-                          style: TextStyle(
-                            fontSize: width * 0.037,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF15243F),
-                          ),
+            // Transactions
+            Expanded(
+              child: ListView(
+                children: fullTransactions.entries.expand((entry) {
+                  return [
+                    Padding(
+                      padding: EdgeInsets.only(bottom: height * 0.005),
+                      child: Text(
+                        entry.key,
+                        style: TextStyle(
+                          fontSize: width * 0.037,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF15243F),
                         ),
                       ),
-                      ...entry.value.map((item) => TransactionRow(item,
-                          fontSize: width * 0.037, spacing: width * 0.04)),
-                      SizedBox(height: height * 0.01),
-                    ];
-                  }).toList(),
-                ),
+                    ),
+                    ...entry.value.map((item) => TransactionRow(item,
+                        fontSize: width * 0.037, spacing: width * 0.04)),
+                    SizedBox(height: height * 0.01),
+                  ];
+                }).toList(),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
