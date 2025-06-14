@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/features/handle_product/presentation/view_model/product_cubit/product_cubit.dart';
 import 'package:taht_bety_provider/features/home/data/models/provider_model/provider_model.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/product_card.dart';
+
+import '../../../../../core/utils/app_router.dart';
 
 
 
@@ -78,7 +81,14 @@ class ProductList extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Edit")),
                   );
-                  
+context.push(
+                      AppRouter.kUpdateProductF,
+                      extra: {provider.providerType: provider.posts![index]},
+                    );
+
+
+
+
 
                 }
               },

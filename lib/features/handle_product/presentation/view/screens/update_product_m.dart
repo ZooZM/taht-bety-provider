@@ -1,12 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-
 import '../../../../../auth/presentation/view/widgets/back_button_circle.dart';
+import '../../../../home/data/models/provider_model/post.dart';
 import '../widgets/labled_field.dart';
 import 'add_product_hc.dart';
 
 class UpdateProductM extends StatelessWidget {
-  const UpdateProductM({super.key});
+  UpdateProductM({
+    Key? key,
+   this.post,
+  }) : super(key: key);
+  final Post? post;
 
   @override
   Widget build(BuildContext context) {

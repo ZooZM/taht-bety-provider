@@ -3,10 +3,10 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:taht_bety_provider/constants.dart';
 
 import 'package:taht_bety_provider/features/home/presentation/view/chats.dart';
-import 'package:taht_bety_provider/features/home/presentation/view/dashboard.dart';
-import 'package:taht_bety_provider/features/home/presentation/view/orders.dart';
+import 'package:taht_bety_provider/features/payment/presentation/view/dashboard_screen.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/service_profile.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/custtom_page_Icon.dart';
+import 'package:taht_bety_provider/features/orders/presentation/view/order_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,9 +18,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int pageIndex = 1;
   List<Widget> pages = [
-    const Dashboard(),
+    const DashboardScreen(),
     const ServiceProfile(),
-    const Orders(),
+    const OrdersScreen(),
     Chats(),
   ];
   List<bool> iconPressed = [

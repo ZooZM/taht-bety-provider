@@ -36,16 +36,24 @@ class _AddProductFState extends State<AddProductF> {
         child: BlocListener<ProductCubit, ProductState>(
           listener: (context, state) {
             if (state is ProductSuccess) {
+                  setState(() {
+                loadingIndicator = false;
+              });
               context.push(AppRouter.kHomePage);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Product added successfully')),
               );
             } else if (state is ProductLoading) {
         
-              loadingIndicator = true;
-              setState(() {});
+              
+              setState(() {
+                loadingIndicator = true;
+              });
        
             } else if (state is ProductFailure) {
+              setState(() {
+                loadingIndicator = false;
+              });
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.failureMssg)),
               );
@@ -194,7 +202,9 @@ class _AddProductFState extends State<AddProductF> {
                   width: screenWidth * 0.3,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: () {
+
+                    onPressed: loadingIndicator?(){}: () {
+
                       if (nameController.text.isEmpty ||
                           descriptionController.text.isEmpty ||
                           priceController.text.isEmpty) {
@@ -202,7 +212,7 @@ class _AddProductFState extends State<AddProductF> {
                           const SnackBar(
                               content: Text('Please fill all fields')),
                         );
-                        return;
+                        
                       }
 
                       context.read<ProductCubit>().addProduct(
