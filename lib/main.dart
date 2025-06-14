@@ -14,9 +14,9 @@ import 'features/handle_product/presentation/view_model/product_cubit/product_cu
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await setup();
   Bloc.observer = MyBlocObserver();
 
-  await setup();
   runApp(const MyApp());
 }
 
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
             getIt<ProviderProfileImpl>(),
           ),
         ),
-                BlocProvider(
+        BlocProvider(
           create: (context) => ProductCubit(
             getIt<ProviderProfileImpl>(),
           ),

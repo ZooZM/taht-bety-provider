@@ -1,20 +1,25 @@
-// chat_screen.dart
+// Refactored provider chat screen with Firebase integration and message display
+
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/utils/styles.dart';
 import '../../../../auth/presentation/view/widgets/back_button_circle.dart';
-import '../../data/models/chat_messege_model.dart';
-
 
 class ChatScreen extends StatefulWidget {
   final String userName;
-  final String lastMessage;
-  final List<ChatMessage> previousMessages;
+  final String userId;
+  final String userImage;
+  final String providerId;
+  final String providerImage;
 
   const ChatScreen({
     super.key,
     required this.userName,
-    required this.lastMessage,
-    this.previousMessages = const [],
+    required this.userId,
+    required this.userImage,
+    required this.providerId,
+    required this.providerImage,
   });
 
   @override
@@ -23,24 +28,32 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<ChatMessage> _messages = [];
 
-  @override
-  void initState() {
-    super.initState();
+  void _sendMessage() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
 
-    _messages.addAll(widget.previousMessages);
-  }
+    final chatId = '${widget.providerId}_${widget.userId}';
 
-  void _sendMessage() {
-    if (_messageController.text.trim().isNotEmpty) {
-      setState(() {
-        _messages.add(
-          ChatMessage(text: _messageController.text.trim(), isMe: true),
-        );
-        _messageController.clear();
-      });
-    }
+    _messageController.clear();
+    await FirebaseFirestore.instance
+        .collection('Chats')
+        .doc(chatId)
+        .collection('messages')
+        .add({
+      'text': text,
+      'isUser': false,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+
+    await FirebaseFirestore.instance.collection('Chats').doc(chatId).set({
+      'provider_id': widget.providerId,
+      'user_id': widget.userId,
+      'userName': widget.userName,
+      'userImage': widget.userImage,
+      'lastMessage': text,
+      'lastMessageTime': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   @override
@@ -50,45 +63,34 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              screenWidth * 0.064,
-              screenHeight * 0.052,
-              screenWidth * 0.179,
-              screenHeight * 0.024,
-            ),
-            child: Row(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Row(
               children: [
-                BackButtonCircle(),
-                SizedBox(width: screenWidth * 0.026),
+                const BackButtonCircle(),
                 Row(
                   children: [
                     Container(
-                      width: screenWidth * 0.154,
-                      height: screenWidth * 0.154,
-                      decoration: const BoxDecoration(
+                      width: screenWidth * 0.1504,
+                      height: screenWidth * 0.1504,
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: AssetImage('assets/icons/profileChat.png'),
+                          image: NetworkImage(
+                            widget.userImage, // Placeholder image
+                          ),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    SizedBox(width: screenWidth * 0.026),
+                    const SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           widget.userName,
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w700,
-                            fontSize: screenWidth * 0.041,
-                            color: const Color(0xFF15243F),
-                            height: 1.5419,
-                          ),
+                          style: Styles.subtitle16Bold,
                         ),
                       ],
                     ),
@@ -96,32 +98,41 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ],
             ),
-          ),
-          const Divider(color: Color(0xFFCFD9E9), thickness: 1),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.064),
-              child: Column(
-                children: [
-                  for (int i = 0; i < _messages.length; i++)
-                    Column(
-                      children: [
-                        _buildChatMessage(
-                          screenWidth: screenWidth,
-                          isMe: _messages[i].isMe,
-                          message: _messages[i].text,
+            const Divider(color: Color(0xFFCFD9E9), thickness: 1),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Chats')
+                    .doc('${widget.providerId}_${widget.userId}')
+                    .collection('messages')
+                    .orderBy('timestamp')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final messages = snapshot.data!.docs;
+                  return ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final data =
+                          messages[index].data() as Map<String, dynamic>;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        child: _buildChatMessage(
+                          isMe: !(data['isUser'] ?? false),
+                          message: data['text'] ?? '',
+                          userImage: widget.userImage,
+                          providerImage: widget.providerImage,
                         ),
-                        if (i < _messages.length - 1)
-                          SizedBox(height: screenHeight * 0.01),
-                      ],
-                    ),
-                ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(screenWidth * 0.064),
-            child: Row(
+            Row(
               children: [
                 Expanded(
                   child: Container(
@@ -139,14 +150,13 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: TextField(
                             controller: _messageController,
                             decoration: const InputDecoration(
-                              hintText: 'Type here or speak',
+                              hintText: 'Type here ',
                               border: InputBorder.none,
                             ),
                             onSubmitted: (_) => _sendMessage(),
                           ),
                         ),
                         SizedBox(width: screenWidth * 0.128),
-                   
                       ],
                     ),
                   ),
@@ -159,9 +169,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     height: screenWidth * 0.123,
                     decoration: BoxDecoration(
                       color: const Color(0xFF3A4D6F),
-                      borderRadius: BorderRadius.circular(
-                        screenWidth * 0.123 / 2,
-                      ),
+                      borderRadius:
+                          BorderRadius.circular(screenWidth * 0.123 / 2),
                     ),
                     child: const Center(
                       child: Icon(Icons.send, color: Colors.white, size: 24),
@@ -170,67 +179,46 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildChatMessage({
-    required double screenWidth,
     required bool isMe,
     required String message,
+    required String userImage,
+    required String providerImage,
   }) {
-    return Align(
-      alignment: isMe ? Alignment.topRight : Alignment.topLeft,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!isMe)
-            Padding(
-              padding: EdgeInsets.only(right: screenWidth * 0.02),
-              child: Container(
-                width: screenWidth * 0.15,
-                height: screenWidth * 0.15,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage('assets/icons/Provider Icon.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: screenWidth * 0.013),
-            padding: EdgeInsets.all(screenWidth * 0.031),
+    return Row(
+      mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+      children: [
+        Flexible(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
-              color: isMe ? const Color(0xFFDCF8C6) : const Color(0xFFE0F7FA),
-              borderRadius: BorderRadius.circular(screenWidth * 0.031),
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(12),
+                topRight: const Radius.circular(12),
+                bottomLeft: isMe ? const Radius.circular(12) : Radius.zero,
+                bottomRight: isMe ? Radius.zero : const Radius.circular(12),
+              ),
+              border: Border.all(
+                width: 0.2,
+                color: !isMe ? kBlack : kWhite,
+              ),
+              color: isMe ? kExtraLite : kWhite,
             ),
             child: Text(
               message,
-              style: TextStyle(fontSize: screenWidth * 0.041),
+              style: Styles.text14Medium,
+              softWrap: true,
+              overflow: TextOverflow.visible,
             ),
           ),
-          if (isMe)
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.02),
-              child: Container(
-                width: screenWidth * 0.15,
-                height: screenWidth * 0.15,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage('assets/icons/profileChat.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
-

@@ -6,17 +6,17 @@ part of 'curuser.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CurUserAdapter extends TypeAdapter<CurUser> {
+class CurUserAdapter extends TypeAdapter<ProviderCurUser> {
   @override
   final int typeId = 0;
 
   @override
-  CurUser read(BinaryReader reader) {
+  ProviderCurUser read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CurUser(
+    return ProviderCurUser(
       token: fields[0] as String,
       userId: fields[1] as String,
       name: fields[2] as String,
@@ -25,21 +25,22 @@ class CurUserAdapter extends TypeAdapter<CurUser> {
       phoneNumber: fields[5] as String,
       role: fields[6] as String,
       region: fields[7] as String,
-      age: fields[8] as int,
-      gender: fields[9] as String,
-      verificationCodeExpiresAt: fields[10] as DateTime,
-      idFrontSide: fields[11] as String,
-      idBackSide: fields[12] as String,
-      isActive: fields[13] as String,
-      isOnline: fields[14] as String,
-      type: fields[15] as String,
+      age: fields[8] as int?,
+      gender: fields[9] as String?,
+      verificationCodeExpiresAt: fields[10] as DateTime?,
+      idFrontSide: fields[11] as String?,
+      idBackSide: fields[12] as String?,
+      isActive: fields[13] as bool?,
+      isOnline: fields[14] as bool?,
+      type: fields[15] as String?,
+      providerId: fields[16] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, CurUser obj) {
+  void write(BinaryWriter writer, ProviderCurUser obj) {
     writer
-      ..writeByte(16)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.token)
       ..writeByte(1)
@@ -71,7 +72,9 @@ class CurUserAdapter extends TypeAdapter<CurUser> {
       ..writeByte(14)
       ..write(obj.isOnline)
       ..writeByte(15)
-      ..write(obj.type);
+      ..write(obj.type)
+      ..writeByte(16)
+      ..write(obj.providerId);
   }
 
   @override

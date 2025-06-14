@@ -38,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
           // Handle failure case
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('failure.failurMsg'),
+              content: Text(failure.failurMsg),
               duration: const Duration(seconds: 3),
             ),
           );

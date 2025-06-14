@@ -14,7 +14,7 @@ const kBaseUrl = "https://ta7t-bety.vercel.app/api/v1/";
 const kBaseCategoryAssets = "assets/images/market_categories/";
 
 const kAddressBox = "addressBox";
-const kCurUserBox = "curUserBox";
+const kCurUserBox = "providerCurUserBox";
 const kRecentSearchBox = "RecentSearchBox";
 const kBasketBox = "basketBox";
 const kProvidersBox = "providerBox";

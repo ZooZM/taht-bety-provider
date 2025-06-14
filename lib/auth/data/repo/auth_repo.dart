@@ -6,7 +6,7 @@ import 'package:taht_bety_provider/auth/data/models/curuser.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
 
 abstract class AuthRepo {
-  Future<Either<Failure, CurUser>> signInWithEmailAndPassword({
+  Future<Either<Failure, ProviderCurUser>> signInWithEmailAndPassword({
     required String email,
     required String password,
   });
@@ -30,7 +30,7 @@ abstract class AuthRepo {
 
   Future<void> verifyEmail();
 
-  Future<Either<Failure, CurUser>> fetchuser();
+  Future<Either<Failure, ProviderCurUser>> fetchuser();
 
   Future<Either<Failure, List<File>>> checkId(File frontImage, File backImage);
 

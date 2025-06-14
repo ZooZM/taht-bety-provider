@@ -3,19 +3,23 @@ import 'package:taht_bety_provider/auth/data/models/curuser.dart';
 import 'package:taht_bety_provider/constants.dart';
 
 class UserStorage {
-  static Box<CurUser>? _box;
+  static Box<ProviderCurUser>? _box;
 
   static Future<void> init() async {
     if (_box != null) return;
 
     if (Hive.isBoxOpen(kCurUserBox)) {
-      _box = Hive.box<CurUser>(kCurUserBox);
+      _box = Hive.box<ProviderCurUser>(kCurUserBox);
     } else {
       try {
-        _box = await Hive.openBox<CurUser>(kCurUserBox);
+        _box = await Hive.openBox<ProviderCurUser>(kCurUserBox);
       } catch (e) {
-        await Hive.deleteBoxFromDisk(kCurUserBox);
-        _box = await Hive.openBox<CurUser>(kCurUserBox);
+        final dir = Hive.boxExists(kCurUserBox);
+        if (await dir) {
+          await Hive.deleteBoxFromDisk(kCurUserBox);
+        }
+
+        _box = await Hive.openBox<ProviderCurUser>(kCurUserBox);
       }
     }
   }
@@ -34,11 +38,12 @@ class UserStorage {
     required DateTime? verificationCodeExpiresAt,
     required String? idFrontSide,
     required String? idBackSide,
-    required String? isActive,
-    required String? isOnline,
+    required bool? isActive,
+    required bool? isOnline,
     required String? type,
+    required String? providerId,
   }) async {
-    final user = CurUser(
+    final user = ProviderCurUser(
       token: token ?? "unknown",
       userId: userId ?? "unknown",
       name: name ?? "unknown",
@@ -52,17 +57,18 @@ class UserStorage {
       verificationCodeExpiresAt: verificationCodeExpiresAt ?? DateTime.now(),
       idFrontSide: idFrontSide ?? '',
       idBackSide: idBackSide ?? '',
-      isActive: isActive ?? 'unknown',
-      isOnline: isOnline ?? 'unknown',
+      isActive: isActive ?? false,
+      isOnline: isOnline ?? false,
       type: type ?? 'unknown',
+      providerId: providerId ?? 'unknown',
     );
 
     await _box?.put(kCurUserBox, user);
   }
 
-  static CurUser getUserData() {
+  static ProviderCurUser getUserData() {
     return _box?.get(kCurUserBox) ??
-        CurUser(
+        ProviderCurUser(
           token: 'unknown',
           userId: 'unknown',
           name: 'unknown',
@@ -76,9 +82,10 @@ class UserStorage {
           verificationCodeExpiresAt: DateTime.now(),
           idFrontSide: 'unknown',
           idBackSide: 'unknown',
-          isActive: 'unknown',
-          isOnline: 'unknown',
+          isActive: false,
+          isOnline: false,
           type: 'unknown',
+          providerId: 'unknown',
         );
   }
 
@@ -101,8 +108,8 @@ class UserStorage {
     List<String>? locations,
     String? idFrontSide,
     String? idBackSide,
-    String? isActive,
-    String? isOnline,
+    bool? isActive,
+    bool? isOnline,
     String? type,
   }) async {
     final user = getUserData();

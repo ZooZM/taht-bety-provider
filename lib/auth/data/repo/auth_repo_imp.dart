@@ -7,7 +7,6 @@ import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/data/repo/auth_repo.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
 import 'package:taht_bety_provider/core/utils/api_service.dart';
-import 'package:taht_bety_provider/core/utils/app_fun.dart';
 
 class AuthRepoImp implements AuthRepo {
   final ApiService apiService;
@@ -20,7 +19,7 @@ class AuthRepoImp implements AuthRepo {
   }
 
   @override
-  Future<Either<Failure, CurUser>> signInWithEmailAndPassword({
+  Future<Either<Failure, ProviderCurUser>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
@@ -35,12 +34,34 @@ class AuthRepoImp implements AuthRepo {
 
       if (response['success']) {
         final userData = response['data'];
-        CurUser user = CurUser.fromJson(userData['user']);
+        ProviderCurUser user = ProviderCurUser.fromJson(userData['user']);
         user.token = userData['token'];
 
         if (user.role != 'provider') {
           return Left(Serverfailure(
               "You are not allowed to sign in as a non-provider."));
+        }
+
+        try {
+          final response =
+              await apiService.get(endPoint: 'providers/${user.userId}');
+          if (response['success']) {
+            final providerData = response['data'];
+
+            user.idFrontSide = providerData['id'][0];
+            user.idBackSide = providerData['id'][1] ?? '';
+            user.type = providerData['providerType'];
+            user.providerId = providerData['_id'];
+            user.isActive = providerData['isActive'] ?? false;
+            user.isOnline = providerData['isOnline'] ?? false;
+            user.verificationCodeExpiresAt = DateTime.parse(
+                providerData['verificationCodeExpiresAt'] ??
+                    DateTime.now().toIso8601String());
+          } else {
+            return Left(Serverfailure(user.email));
+          }
+        } catch (e) {
+          return Left(Serverfailure('Failed to sign in'));
         }
         await UserStorage.saveUserData(
           token: user.token,
@@ -59,23 +80,8 @@ class AuthRepoImp implements AuthRepo {
           isActive: user.isActive,
           isOnline: user.isOnline,
           type: user.type,
+          providerId: user.providerId,
         );
-        // try {
-        //   final response =
-        //       await apiService.get(endPoint: 'providers/${user.userId}');
-        //   if (response['success']) {
-        //     final providerData = response['data'];
-        //     user.idFrontSide = providerData['id'][0];
-        //     user.idBackSide = providerData['id'][1] ?? '';
-        //     user.isActive = providerData['isActive'];
-        //     user.isOnline = providerData['isOnline'];
-        //     user.type = providerData['providerType'];
-        //   } else {
-        //     return Left(Serverfailure(response['message']));
-        //   }
-        // } catch (e) {
-        //   return Left(Serverfailure(user.email));
-        // }
         return Right(user);
       } else {
         return Left(Serverfailure('Failed to sign in'));
@@ -135,7 +141,7 @@ class AuthRepoImp implements AuthRepo {
 
       if (response['success']) {
         final userData = response['data'];
-        CurUser user = CurUser.fromJson(userData['user']);
+        ProviderCurUser user = ProviderCurUser.fromJson(userData['user']);
         user.token = userData['token'];
         await UserStorage.saveUserData(
           token: user.token,
@@ -154,6 +160,7 @@ class AuthRepoImp implements AuthRepo {
           isActive: user.isActive,
           isOnline: user.isOnline,
           type: type,
+          providerId: user.providerId,
         );
         return Right(response['message']);
       } else {
@@ -175,18 +182,64 @@ class AuthRepoImp implements AuthRepo {
   }
 
   @override
-  Future<Either<Failure, CurUser>> fetchuser() async {
+  Future<Either<Failure, ProviderCurUser>> fetchuser() async {
     try {
       final user = UserStorage.getUserData();
       final response =
           await apiService.get(endPoint: 'users/me', token: user.token);
-      final providerResponse = await apiService.get(
-          endPoint: 'provders/${user.userId}', token: user.token);
-      if (providerResponse['success']) {
-        final userData = CurUser.fromJson(response['data']);
-        return Right(userData);
+
+      if (response['success']) {
+        final userData = response['data'];
+        ProviderCurUser user = ProviderCurUser.fromJson(userData['user']);
+        user.token = userData['token'];
+
+        if (user.role != 'provider') {
+          return Left(Serverfailure(
+              "You are not allowed to sign in as a non-provider."));
+        }
+
+        try {
+          final response =
+              await apiService.get(endPoint: 'providers/${user.userId}');
+          if (response['success']) {
+            final providerData = response['data'];
+
+            user.idFrontSide = providerData['id'][0];
+            user.idBackSide = providerData['id'][1] ?? '';
+            user.type = providerData['providerType'];
+            user.providerId = providerData['_id'];
+            user.isActive = providerData['isActive'] ?? false;
+            user.isOnline = providerData['isOnline'] ?? false;
+            user.verificationCodeExpiresAt =
+                DateTime.parse(providerData['verificationCodeExpiresAt']);
+          } else {
+            return Left(Serverfailure(user.email));
+          }
+        } catch (e) {
+          return Left(Serverfailure('Failed to sign in'));
+        }
+        await UserStorage.saveUserData(
+          token: user.token,
+          userId: user.userId,
+          name: user.name,
+          email: user.email,
+          photo: user.photo,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          region: user.region,
+          age: user.age,
+          gender: user.gender,
+          verificationCodeExpiresAt: user.verificationCodeExpiresAt,
+          idFrontSide: user.idFrontSide,
+          idBackSide: user.idBackSide,
+          isActive: user.isActive,
+          isOnline: user.isOnline,
+          type: user.type,
+          providerId: user.providerId,
+        );
+        return Right(user);
       } else {
-        return Left(Serverfailure(response['message']));
+        return Left(Serverfailure('Failed to sign in'));
       }
     } catch (e) {
       if (e is DioException) {

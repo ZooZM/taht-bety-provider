@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 part 'curuser.g.dart';
 
 @HiveType(typeId: 0)
-class CurUser extends HiveObject {
+class ProviderCurUser extends HiveObject {
   @HiveField(0)
   String token;
   @HiveField(1)
@@ -30,13 +30,15 @@ class CurUser extends HiveObject {
   @HiveField(12)
   String? idBackSide;
   @HiveField(13)
-  String? isActive;
+  bool? isActive;
   @HiveField(14)
-  String? isOnline;
+  bool? isOnline;
   @HiveField(15)
   String? type;
+  @HiveField(16)
+  String? providerId;
 
-  CurUser({
+  ProviderCurUser({
     required this.token,
     required this.userId,
     required this.name,
@@ -53,10 +55,11 @@ class CurUser extends HiveObject {
     required this.isActive,
     required this.isOnline,
     required this.type,
+    required this.providerId,
   });
 
-  factory CurUser.fromJson(Map<String, dynamic> json) {
-    return CurUser(
+  factory ProviderCurUser.fromJson(Map<String, dynamic> json) {
+    return ProviderCurUser(
       token: json['token'] ?? '',
       userId: json['_id'] ?? '',
       name: json['name'] ?? '',
@@ -79,9 +82,10 @@ class CurUser extends HiveObject {
           : DateTime.now(),
       idFrontSide: json['idFrontSide'] ?? '',
       idBackSide: json['idBackSide'] ?? '',
-      isActive: json['isActive'] ?? '',
-      isOnline: json['isOnline'] ?? '',
+      isActive: json['isActive'] ?? false,
+      isOnline: json['isOnline'] ?? false,
       type: json['type'] ?? '',
+      providerId: json['providerId'] ?? '',
     );
   }
 }

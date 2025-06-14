@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
     const Dashboard(),
     const ServiceProfile(),
     const Orders(),
-    const Chats(),
+    Chats(),
   ];
   List<bool> iconPressed = [
     false,
