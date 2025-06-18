@@ -82,8 +82,13 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
 
               isSignUp0
                   ? context.push(AppRouter.kMaps)
-                  : () {
-                      context.read<UpdateProviderCubit>().updateProvider(image);
+                  : () async {
+                      final now = DateTime.now().toUtc();
+                      final isoString = now.toIso8601String() + 'Z';
+
+                      await context
+                          .read<UpdateProviderCubit>()
+                          .updateProvider(isoString);
                       context.go(AppRouter.kHomePage);
                     };
             } else if (state is CreateFaceIdFailure) {

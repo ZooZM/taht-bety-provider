@@ -227,4 +227,31 @@ class ProviderProfileImpl implements ProviderProfileRepo {
       return left(Serverfailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateProviderLastPhoto(String date) async {
+    try {
+      final providerId = UserStorage.getUserData().providerId;
+      var response = await apiService.put(
+        endPoint: 'providers/$providerId',
+        data: {
+          "lastPhotoAt": date,
+        },
+        token: UserStorage.getUserData().token,
+      );
+
+      if (response['success']) {
+        ProviderModel updatedProvider =
+            ProviderModel.fromJson(response['data']);
+        return right(updatedProvider);
+      } else {
+        return left(Serverfailure(response['message']));
+      }
+    } catch (e) {
+      if (e is DioException) {
+        return left(Serverfailure.fromDioException(e));
+      }
+      return left(Serverfailure(e.toString()));
+    }
+  }
 }

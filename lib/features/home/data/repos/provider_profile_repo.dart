@@ -28,5 +28,5 @@ abstract class ProviderProfileRepo {
   Future<Either<Failure, void>> updateProviderName(String name);
   Future<Either<Failure, ProviderModel>> updateProviderState(
       bool isOnline, String providerId);
-  Future<Either<Failure, void>> updateProviderLast(String name);
+  Future<Either<Failure, void>> updateProviderLastPhoto(String date);
 }
