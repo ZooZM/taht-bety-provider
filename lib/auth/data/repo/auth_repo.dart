@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
+import 'package:taht_bety_provider/features/home/data/models/provider_model/provider_model.dart';
 
 abstract class AuthRepo {
   Future<Either<Failure, ProviderCurUser>> signInWithEmailAndPassword({
@@ -34,5 +35,9 @@ abstract class AuthRepo {
 
   Future<Either<Failure, List<File>>> checkId(File frontImage, File backImage);
 
-  Future<Either<Failure, File>> createFaceID(File photo);
+  Future<Either<Failure, File>> createFaceID(
+      {required File photo, required bool isSignUp});
+
+  Future<Either<Failure, ProviderModel>> createProvider(
+      {required bool isActive});
 }

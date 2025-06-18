@@ -27,7 +27,7 @@ class CurUserAdapter extends TypeAdapter<ProviderCurUser> {
       region: fields[7] as String,
       age: fields[8] as int?,
       gender: fields[9] as String?,
-      verificationCodeExpiresAt: fields[10] as DateTime?,
+      lastPhotoAt: fields[10] as DateTime?,
       idFrontSide: fields[11] as String?,
       idBackSide: fields[12] as String?,
       isActive: fields[13] as bool?,
@@ -62,7 +62,7 @@ class CurUserAdapter extends TypeAdapter<ProviderCurUser> {
       ..writeByte(9)
       ..write(obj.gender)
       ..writeByte(10)
-      ..write(obj.verificationCodeExpiresAt)
+      ..write(obj.lastPhotoAt)
       ..writeByte(11)
       ..write(obj.idFrontSide)
       ..writeByte(12)

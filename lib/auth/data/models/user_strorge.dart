@@ -54,7 +54,7 @@ class UserStorage {
       region: region ?? "unknown",
       age: age ?? 0,
       gender: gender ?? "unknown",
-      verificationCodeExpiresAt: verificationCodeExpiresAt ?? DateTime.now(),
+      lastPhotoAt: verificationCodeExpiresAt ?? DateTime.now(),
       idFrontSide: idFrontSide ?? '',
       idBackSide: idBackSide ?? '',
       isActive: isActive ?? false,
@@ -79,7 +79,7 @@ class UserStorage {
           region: 'unknown',
           age: 0,
           gender: 'unknown',
-          verificationCodeExpiresAt: DateTime.now(),
+          lastPhotoAt: DateTime.now(),
           idFrontSide: 'unknown',
           idBackSide: 'unknown',
           isActive: false,
@@ -93,25 +93,25 @@ class UserStorage {
     await _box?.delete(kCurUserBox);
   }
 
-  static Future<void> updateUserData({
-    String? token,
-    String? userId,
-    String? name,
-    String? email,
-    String? photo,
-    String? phoneNumber,
-    String? role,
-    String? region,
-    int? age,
-    String? gender,
-    DateTime? verificationCodeExpiresAt,
-    List<String>? locations,
-    String? idFrontSide,
-    String? idBackSide,
-    bool? isActive,
-    bool? isOnline,
-    String? type,
-  }) async {
+  static Future<void> updateUserData(
+      {String? token,
+      String? userId,
+      String? name,
+      String? email,
+      String? photo,
+      String? phoneNumber,
+      String? role,
+      String? region,
+      int? age,
+      String? gender,
+      DateTime? verificationCodeExpiresAt,
+      List<String>? locations,
+      String? idFrontSide,
+      String? idBackSide,
+      bool? isActive,
+      bool? isOnline,
+      String? type,
+      String? providerId}) async {
     final user = getUserData();
     user.token = token ?? user.token;
     user.userId = userId ?? user.userId;
@@ -123,13 +123,13 @@ class UserStorage {
     user.region = region ?? user.region;
     user.age = age ?? user.age;
     user.gender = gender ?? user.gender;
-    user.verificationCodeExpiresAt =
-        verificationCodeExpiresAt ?? user.verificationCodeExpiresAt;
+    user.lastPhotoAt = verificationCodeExpiresAt ?? user.lastPhotoAt;
     user.idFrontSide = idFrontSide ?? user.idFrontSide;
     user.idBackSide = idBackSide ?? user.idBackSide;
     user.isActive = user.isActive ?? isActive;
     user.isOnline = user.isOnline ?? isOnline;
     user.type = user.type ?? type;
+    user.providerId = user.providerId == '' ? providerId : user.providerId;
 
     await _box?.put(kCurUserBox, user);
   }

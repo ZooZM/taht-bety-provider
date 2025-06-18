@@ -45,6 +45,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   flutter_svg: ^2.0.10+1
   font_awesome_flutter: ^10.2.1
+  geocoding: ^4.0.0
   get_it: ^8.0.2
   go_router: ^14.3.0
   google_maps_flutter: ^2.10.0
@@ -82,6 +83,7 @@ flutter:
     - assets/icons/face.png
     - assets/icons/center_face.png
     - assets/images/market_categories/
+    - assets/icons/finish.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';
+import 'package:taht_bety_provider/features/handle_product/presentation/view_model/product_cubit/product_cubit.dart';
 import 'package:taht_bety_provider/features/home/data/models/provider_model/post.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/add_icon.dart';
 import 'package:taht_bety_provider/features/product/presentation/view/widgets/item_product_card.dart';
@@ -41,6 +43,12 @@ class _CategoryDetailsBodyState extends State<CategoryDetailsBody> {
     });
   }
 
+  void _deleteFromList(String postId) {
+    setState(() {
+      filteredProducts.removeWhere((post) => post.id == postId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,9 +80,12 @@ class _CategoryDetailsBodyState extends State<CategoryDetailsBody> {
                   style: Styles.subtitle18Bold,
                 ),
                 const Spacer(),
-                AddIcon(title: 'Add Items', onTap: () {
-                  context.push(AppRouter.kAddProductM);
-                }),
+                AddIcon(
+                    title: 'Add Items',
+                    onTap: () {
+                      context.push(AppRouter.kAddProductM,
+                          extra: widget.category);
+                    }),
               ],
             ),
           ),
@@ -101,8 +112,22 @@ class _CategoryDetailsBodyState extends State<CategoryDetailsBody> {
                 runSpacing: 8,
                 children: List.generate(
                   filteredProducts.length,
-                  (index) => ItemProductCard(
-                    post: filteredProducts[index],
+                  (index) => BlocListener<ProductCubit, ProductState>(
+                    listener: (context, state) {
+                      if (state is ProductFailure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.failureMssg),
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+                      } else if (state is ProductSuccess) {
+                        _deleteFromList(filteredProducts[index].id!);
+                      }
+                    },
+                    child: ItemProductCard(
+                      post: filteredProducts[index],
+                    ),
                   ),
                 ),
               ),

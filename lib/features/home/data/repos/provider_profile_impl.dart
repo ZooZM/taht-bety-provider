@@ -32,6 +32,12 @@ class ProviderProfileImpl implements ProviderProfileRepo {
 
       if (providerData != null) {
         provider = ProviderModel.fromJson(providerData);
+        UserStorage.updateUserData(
+          isOnline: provider.isOnline,
+          isActive: provider.isActive,
+          providerId: provider.providerId,
+          type: provider.providerType,
+        );
       }
 
       return provider == null
@@ -84,6 +90,7 @@ class ProviderProfileImpl implements ProviderProfileRepo {
 
       if (response['success']) {
         User updatedUser = User.fromJson(response['data']);
+        UserStorage.updateUserData(name: updatedUser.name);
         return right(updatedUser);
       } else {
         return left(Serverfailure(response['message']));
@@ -101,7 +108,7 @@ class ProviderProfileImpl implements ProviderProfileRepo {
       bool isOnline, String providerId) async {
     try {
       var response = await apiService.put(
-        endPoint: 'providers/${providerId}',
+        endPoint: 'providers/$providerId',
         data: {
           "isOnline": isOnline,
         },
@@ -122,9 +129,14 @@ class ProviderProfileImpl implements ProviderProfileRepo {
       return left(Serverfailure(e.toString()));
     }
   }
-  @override
-  Future<Either<Failure, Post>> addProduct({required String title, required String content, required double price, required List<String> images, required bool isMainService})async {
 
+  @override
+  Future<Either<Failure, Post>> addProduct(
+      {required String title,
+      required String content,
+      required double price,
+      required List<String> images,
+      required bool isMainService}) async {
     try {
       final user = UserStorage.getUserData();
       final response = await apiService.post(
@@ -153,12 +165,10 @@ class ProviderProfileImpl implements ProviderProfileRepo {
       }
       return left(Serverfailure(e.toString()));
     }
-    
   }
 
   @override
-  Future<Either<Failure, Post>> deleteProduct({required String postId})async {
- 
+  Future<Either<Failure, void>> deleteProduct({required String postId}) async {
     try {
       final user = UserStorage.getUserData();
       final response = await apiService.delete(
@@ -166,10 +176,10 @@ class ProviderProfileImpl implements ProviderProfileRepo {
         token: user.token,
       );
 
-      if (response['success']) {
-        return right(Post.fromJson(response['data']));
+      if (response == '') {
+        return right(null);
       } else {
-        return left(Serverfailure(response['message']));
+        return left(Serverfailure('fail'));
       }
     } catch (e) {
       print(e.toString());
@@ -181,11 +191,16 @@ class ProviderProfileImpl implements ProviderProfileRepo {
   }
 
   @override
-  Future<Either<Failure, Post>> updateProduct({required String postId, required String title, required String content, required double price, required List<String> images, required bool isMainService})async {
-  
-  try {
+  Future<Either<Failure, Post>> updateProduct(
+      {required String postId,
+      required String title,
+      required String content,
+      required double price,
+      required List<String> images,
+      required bool isMainService}) async {
+    try {
       final user = UserStorage.getUserData();
-      final response = await apiService.patch(
+      final response = await apiService.put(
         endPoint: 'posts/$postId',
         data: {
           'title': title,
@@ -212,5 +227,4 @@ class ProviderProfileImpl implements ProviderProfileRepo {
       return left(Serverfailure(e.toString()));
     }
   }
-
 }

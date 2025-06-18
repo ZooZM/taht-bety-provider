@@ -2,12 +2,16 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/back_button_circle.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_title.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/main_button.dart';
-import 'package:taht_bety_provider/auth/presentation/view_model/cubit/createprovider_cubit.dart';
+import 'package:taht_bety_provider/auth/presentation/view_model/createprovidercubit/createprovider_cubit.dart';
 import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/utils/app_router.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/fetch_provider_cubit.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 class TakeSelfieScreen extends StatefulWidget {
   const TakeSelfieScreen({super.key});
@@ -58,10 +62,13 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final isSignUp = GoRouterState.of(context).extra as bool?;
+
     return Scaffold(
       body: SafeArea(
         child: BlocListener<CreateproviderCubit, CreateproviderState>(
           listener: (context, state) {
+            bool isSignUp0 = isSignUp ?? true;
             if (state is CreateFaceIdLoading) {
               setState(() {
                 _isLoading = true;
@@ -72,6 +79,13 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
                 _isLoading = false;
                 _errorMessage = 'true';
               });
+
+              isSignUp0
+                  ? context.push(AppRouter.kMaps)
+                  : () {
+                      context.read<UpdateProviderCubit>().updateProvider(image);
+                      context.go(AppRouter.kHomePage);
+                    };
             } else if (state is CreateFaceIdFailure) {
               setState(() {
                 _isLoading = false;
@@ -153,7 +167,8 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
                                 context
                                     .read<CreateproviderCubit>()
                                     .createFaceID(
-                                      File(file.path),
+                                      photo: File(file.path),
+                                      isSignUp: isSignUp ?? true,
                                     );
                               }
                             }).catchError((e) {

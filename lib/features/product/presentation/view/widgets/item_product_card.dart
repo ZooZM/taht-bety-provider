@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/widgets/custom_circular_progress.dart';
 import 'package:taht_bety_provider/core/widgets/custom_cushed_image.dart';
+import 'package:taht_bety_provider/features/handle_product/presentation/view_model/product_cubit/product_cubit.dart';
 import 'package:taht_bety_provider/features/home/data/models/provider_model/post.dart';
 
-class ItemProductCard extends StatefulWidget {
+class ItemProductCard extends StatelessWidget {
   final Post post;
 
   const ItemProductCard({
@@ -11,11 +14,6 @@ class ItemProductCard extends StatefulWidget {
     required this.post,
   });
 
-  @override
-  State<ItemProductCard> createState() => _ItemProductCardState();
-}
-
-class _ItemProductCardState extends State<ItemProductCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -30,9 +28,8 @@ class _ItemProductCardState extends State<ItemProductCard> {
               alignment: Alignment.bottomRight,
               children: [
                 CustomCushedImage(
-                  image: widget.post.images != null &&
-                          widget.post.images!.isNotEmpty
-                      ? widget.post.images![0]
+                  image: post.images != null && post.images!.isNotEmpty
+                      ? post.images![0]
                       : 'assets/images/placeholder.png', // صورة افتراضية إذا لم تكن هناك صور
                   height: 120,
                   width: double.infinity,
@@ -63,7 +60,11 @@ class _ItemProductCardState extends State<ItemProductCard> {
                   bottom: 8,
                   left: 8,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      await context.read<ProductCubit>().deleteProduct(
+                            postId: post.id!,
+                          );
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -73,9 +74,19 @@ class _ItemProductCardState extends State<ItemProductCard> {
                         color: ksecondryColor,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.white,
+                      child: BlocBuilder<ProductCubit, ProductState>(
+                        builder: (context, state) {
+                          if (state is ProductLoading) {
+                            return const CustomCircularprogress(
+                              size: 20,
+                              color: kWhite,
+                            );
+                          }
+                          return const Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -90,7 +101,7 @@ class _ItemProductCardState extends State<ItemProductCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.post.title ?? 'Unknown Product',
+                    post.title ?? 'Unknown Product',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -99,7 +110,7 @@ class _ItemProductCardState extends State<ItemProductCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${widget.post.price ?? 0} EGP',
+                    '${post.price ?? 0} EGP',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.primary,

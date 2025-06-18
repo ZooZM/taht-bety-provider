@@ -51,7 +51,7 @@ class UpperWidgetLoading extends StatelessWidget {
                   top: coverHeight + 10,
                   left: imageWidth + 20,
                   right: 12,
-                  child: const ServProfileInfo(
+                  child: ServProfileInfo(
                     name: "Provider Name",
                     address: " Address",
                     rate: 0.0,

@@ -44,7 +44,7 @@ class MapsAppBar extends StatelessWidget {
                   ),
                   const Spacer(),
                   const Text(
-                    "Delivery Address",
+                    "Busines Address",
                     style: Styles.subtitle18Bold,
                   ),
                   const Spacer(),

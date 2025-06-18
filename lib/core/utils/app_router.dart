@@ -5,6 +5,7 @@ import 'package:taht_bety_provider/auth/presentation/view/finish_create_provider
 import 'package:taht_bety_provider/auth/presentation/view/sign_in_view.dart';
 import 'package:taht_bety_provider/auth/presentation/view/signup.dart';
 import 'package:taht_bety_provider/auth/presentation/view/take_selfie_screen.dart';
+import 'package:taht_bety_provider/features/handle_product/presentation/view/screens/update_product.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/home_page.dart';
 import 'package:taht_bety_provider/features/maps/presentation/view/display_maps.dart';
 import 'package:taht_bety_provider/features/product/presentation/view/category_details_screen.dart';
@@ -13,10 +14,6 @@ import '../../features/handle_product/presentation/view/screens/add_product_f.da
 import '../../features/handle_product/presentation/view/screens/add_product_hc.dart';
 import '../../features/handle_product/presentation/view/screens/add_product_m.dart';
 import '../../features/handle_product/presentation/view/screens/add_product_r.dart';
-import '../../features/handle_product/presentation/view/screens/update_product_f.dart';
-import '../../features/handle_product/presentation/view/screens/update_product_hc.dart';
-import '../../features/handle_product/presentation/view/screens/update_product_m.dart';
-import '../../features/handle_product/presentation/view/screens/update_product_r.dart';
 import '../../features/orders/presentation/view/order_details_screen.dart';
 import '../../features/orders/presentation/view/order_screen.dart';
 import '../../features/payment/presentation/view/person_details.dart';
@@ -37,10 +34,7 @@ abstract class AppRouter {
   static const String kAddProductM = '/addproductM';
   static const String kAddProductHC = '/addproductHC';
   static const String kAddProductR = '/addproductR';
-  static const String kUpdateProductF = '/updateproductF';
-  static const String kUpdateProductM = '/updateproductM';
-  static const String kUpdateProductHC = '/updateproductHC';
-  static const String kUpdateProductR = '/updateproductR';
+  static const String kUpdateProduct = '/updateproduct';
   static const String kOrdersScreen = '/ordersScreen';
   static const String kOrderDetails = '/orderDetails';
   static const String kPersonDetails = '/person-details';
@@ -99,20 +93,8 @@ abstract class AppRouter {
       builder: (context, state) => const AddProductR(),
     ),
     GoRoute(
-      path: kUpdateProductF,
-      builder: (context, state) => UpdateProductF(),
-    ),
-    GoRoute(
-      path: kUpdateProductM,
-      builder: (context, state) => UpdateProductM(),
-    ),
-    GoRoute(
-      path: kUpdateProductHC,
-      builder: (context, state) => UpdateProductHc(),
-    ),
-    GoRoute(
-      path: kUpdateProductR,
-      builder: (context, state) => UpdateProductR(),
+      path: kUpdateProduct,
+      builder: (context, state) => UpdateProduct(),
     ),
     GoRoute(
       path: kOrdersScreen,

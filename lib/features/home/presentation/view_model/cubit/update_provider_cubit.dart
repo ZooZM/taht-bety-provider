@@ -29,10 +29,9 @@ class UpdateProviderCubit extends Cubit<UpdateProviderState> {
     });
   }
 
-  Future<void> updateProviderState(bool isOnline, String providerId) async {
+  Future<void> updateProviderLastPhoto(String date) async {
     emit(UpdateProviderLoading());
-    var result =
-        await providerProfileRepo.updateProviderState(isOnline, providerId);
+    var result = await providerProfileRepo.updateProviderLastPhoto(date);
     result.fold((failure) {
       emit(UpdateProviderFailure(failure.failurMsg));
     }, (data) {

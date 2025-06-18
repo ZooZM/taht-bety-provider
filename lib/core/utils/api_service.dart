@@ -50,7 +50,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> put({
     required String endPoint,
-    required Map<String, dynamic> data,
+    required dynamic data,
     String? token,
   }) async {
     var response = await _dio.put(
@@ -67,7 +67,7 @@ class ApiService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>> delete({
+  Future<String> delete({
     required String endPoint,
     String? token,
   }) async {

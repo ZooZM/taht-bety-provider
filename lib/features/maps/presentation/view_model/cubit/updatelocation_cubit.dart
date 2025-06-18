@@ -18,8 +18,11 @@ class UpdatelocationCubit extends Cubit<UpdatelocationState> {
   }) async {
     emit(UpdatelocationLoading());
     try {
+      final user = UserStorage.getUserData();
       final response = await ApiService(_dio).put(
-        endPoint: 'users/update-me',
+        endPoint: user.providerId == 'unknown'
+            ? 'users/update-me'
+            : 'providers/${user.providerId}',
         data: {
           "locations": [
             {

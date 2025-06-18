@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:taht_bety_provider/core/widgets/custom_circular_progress.dart';
 import 'package:taht_bety_provider/core/widgets/custom_widget_loading.dart';
 import 'package:taht_bety_provider/features/orders/data/models/order_model/order_model.dart';
 import 'package:taht_bety_provider/features/orders/presentation/view_model/cubit/order_cubit.dart';
@@ -40,8 +39,8 @@ class PendingOrdersScreen extends StatelessWidget {
                       child: OrderCard(
                         order: orders[index],
                         mode: OrderCardMode.pending,
-                        onAccept: () => print('Order Accepted'),
-                        onReject: () => print('Order Cancelled'),
+                        onAccept: () {},
+                        onReject: () {},
                       ),
                     );
                   }

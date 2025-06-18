@@ -24,7 +24,7 @@ class ProviderCurUser extends HiveObject {
   @HiveField(9)
   String? gender;
   @HiveField(10)
-  DateTime? verificationCodeExpiresAt;
+  DateTime? lastPhotoAt;
   @HiveField(11)
   String? idFrontSide;
   @HiveField(12)
@@ -49,7 +49,7 @@ class ProviderCurUser extends HiveObject {
     required this.region,
     required this.age,
     required this.gender,
-    required this.verificationCodeExpiresAt,
+    required this.lastPhotoAt,
     required this.idFrontSide,
     required this.idBackSide,
     required this.isActive,
@@ -76,7 +76,7 @@ class ProviderCurUser extends HiveObject {
                   ? int.tryParse(json['age'][0].toString()) ?? 0
                   : 0)),
       gender: json['gender'] ?? '',
-      verificationCodeExpiresAt: json['verificationCodeExpiresAt'] is String
+      lastPhotoAt: json['verificationCodeExpiresAt'] is String
           ? DateTime.tryParse(json['verificationCodeExpiresAt']) ??
               DateTime.now()
           : DateTime.now(),

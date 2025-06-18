@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_state_cubit.dart';
 
 // فئة StatefulWidget للزر التبديل القابل للسحب لأن حالته ستتغير
 class SlidingToggleSwitch extends StatefulWidget {
@@ -9,9 +10,11 @@ class SlidingToggleSwitch extends StatefulWidget {
     super.key,
     required this.providerId,
     required this.isOnline,
+    required this.trackWidth,
   });
   final String providerId;
   final bool isOnline;
+  final double trackWidth;
   @override
   _SlidingToggleSwitchState createState() => _SlidingToggleSwitchState();
 }
@@ -25,9 +28,9 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
   Animation<double>? _animation;
 
   // أبعاد الزر والمقبض (المؤشر)
-  final double _trackWidth = 180.0; // العرض الكلي للمسار
+  late double _trackWidth; // العرض الكلي للمسار
   final double _trackHeight = 40.0; // ارتفاع المسار
-  final double _thumbWidth = 110.0; // عرض المقبض
+  late double _thumbWidth; // عرض المقبض
 
   @override
   void initState() {
@@ -35,6 +38,8 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
 
     _isOnline = widget.isOnline;
     _dragPosition = _isOnline ? 1.0 : 0.0;
+    _trackWidth = widget.trackWidth;
+    _thumbWidth = widget.trackWidth / 2;
     // تهيئة وحدة التحكم بالرسوم المتحركة
     _animationController = AnimationController(
       vsync: this,
@@ -92,11 +97,16 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
   }
 
   // معالجة النقر على الزر
-  void _handleTap() {
+  void _handleTap(bool isLogic) async {
     _animateTo(_isOnline ? 0.0 : 1.0); // تبديل الحالة
+    if (isLogic) {
+      await context
+          .read<UpdateProviderStateCubit>()
+          .updateProviderState(!_isOnline, widget.providerId);
+    }
   }
 
-  // تشغيل الرسوم المتحركة إلى قيمة مستهدفة
+  // // تشغيل الرسوم المتحركة إلى قيمة مستهدفة
   void _animateTo(double targetValue) {
     _animation = Tween<double>(
       begin: _dragPosition,
@@ -109,7 +119,7 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
       // لو الحالة فعلاً اتغيرت، استدعي الدالة
       if (_isOnline != newIsOnline) {
         _isOnline = newIsOnline;
-        // BlocProvider.of<UpdateProviderCubit>(context)
+        // BlocProvider.of<UpdateProviderStateCubit>(context)
         //     .updateProviderState(_isOnline, widget.providerId);
       } else {
         _isOnline = newIsOnline;
@@ -118,6 +128,17 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
       setState(() {}); // علشان يعيد بناء الواجهة
     });
   }
+  // تشغيل الرسوم المتحركة إلى قيمة مستهدفة
+  // void _animateTo(double targetValue) {
+  //   _animation = Tween<double>(begin: _dragPosition, end: targetValue)
+  //       .animate(_animationController!);
+  //   _animationController!.forward(from: 0.0).then((_) {
+  //     // عند اكتمال الرسوم المتحركة، قم بتحديث الحالة المنطقية
+  //     setState(() {
+  //       _isOnline = (targetValue == 1.0);
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -132,86 +153,102 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
     final Color thumbColor =
         _isOnline ? ksecondryColor : kLightBlue; // ألوان المقبض
 
-    return GestureDetector(
-      onHorizontalDragStart: _handleDragStart,
-      onHorizontalDragUpdate: _handleDragUpdate,
-      onHorizontalDragEnd: _handleDragEnd,
-      onTap: _handleTap, // السماح بالنقر للتبديل أيضًا
-      child: Container(
-        width: _trackWidth,
-        height: _trackHeight,
-        decoration: BoxDecoration(
-          borderRadius:
-              BorderRadius.circular(_trackHeight / 2), // حواف دائرية للمسار
-          // color: backgroundColor,
-          border: Border.all(
-            color: _isOnline ? ksecondryColor : kLightBlue, // لون الحدود
-            width: 2.0, // سمك الحدود
+    return BlocListener<UpdateProviderStateCubit, UpdateProviderStateState>(
+      listener: (context, state) {
+        if (state is UpdateProviderStateFailure) {
+          _handleTap(false);
+        }
+      },
+      child: GestureDetector(
+        // onHorizontalDragStart: _handleDragStart,
+        // onHorizontalDragUpdate: _handleDragUpdate,
+        // onHorizontalDragEnd: _handleDragEnd,
+        onTap: () {
+          _handleTap(true); // السماح بالنقر للتبديل أيضًا
+        },
+        // () async {
+        // await Future.delayed(const Duration(seconds: 2));
+
+        // await context
+        //     .read<UpdateProviderStateCubit>()
+        //     .updateProviderState(_isOnline, widget.providerId);
+        // },
+        child: Container(
+          width: _trackWidth,
+          height: _trackHeight,
+          decoration: BoxDecoration(
+            borderRadius:
+                BorderRadius.circular(_trackHeight / 2), // حواف دائرية للمسار
+            // color: backgroundColor,
+            border: Border.all(
+              color: _isOnline ? ksecondryColor : kLightBlue, // لون الحدود
+              width: 2.0, // سمك الحدود
+            ),
           ),
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // نص "Online" على اليسار
-            // Positioned(
-            //   left: 20,
-            //   child: Text(
-            //     'Online',
-            //     style: TextStyle(
-            //       color: _isOnline
-            //           ? Colors.white
-            //           : Colors.grey
-            //               .shade400, // لون أبيض عندما يكون Online، رمادي عند Offline
-            //       fontSize: 18,
-            //       fontWeight: FontWeight.bold,
-            //     ),
-            //   ),
-            // ),
-            // // نص "Offline" على اليمين
-            // Positioned(
-            //   right: 20,
-            //   child: Text(
-            //     'Offline',
-            //     style: TextStyle(
-            //       color: !_isOnline
-            //           ? Colors.white
-            //           : Colors.grey
-            //               .shade400, // لون أبيض عندما يكون Offline، رمادي عند Online
-            //       fontSize: 18,
-            //       fontWeight: FontWeight.bold,
-            //     ),
-            //   ),
-            // ),
-            // المقبض المنزلق (الجزء المتحرك)
-            AnimatedPositioned(
-              duration: const Duration(
-                  milliseconds:
-                      0), // يتم التحكم في الحركة بواسطة الرسوم المتحركة وليس مدة الموضع المتحرك
-              curve: Curves.easeInOut,
-              left: _isOnline ? thumbPosition - 2 : thumbPosition - 8,
-              child: Container(
-                width: _thumbWidth,
-                height: _trackHeight -
-                    6, // أصغر قليلاً من الارتفاع الكلي لخلق تأثير "الداخل"
-                margin: const EdgeInsets.all(3.0), // هامش لتبدو داخل المسار
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                      (_trackHeight - 6) / 2), // حواف دائرية للمقبض
-                  color: thumbColor,
-                ),
-                child: Center(
-                  child: Text(
-                    _isOnline ? 'Online' : 'Offline',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // نص "Online" على اليسار
+              // Positioned(
+              //   left: 20,
+              //   child: Text(
+              //     'Online',
+              //     style: TextStyle(
+              //       color: _isOnline
+              //           ? Colors.white
+              //           : Colors.grey
+              //               .shade400, // لون أبيض عندما يكون Online، رمادي عند Offline
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              // ),
+              // // نص "Offline" على اليمين
+              // Positioned(
+              //   right: 20,
+              //   child: Text(
+              //     'Offline',
+              //     style: TextStyle(
+              //       color: !_isOnline
+              //           ? Colors.white
+              //           : Colors.grey
+              //               .shade400, // لون أبيض عندما يكون Offline، رمادي عند Online
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.bold,
+              //     ),
+              //   ),
+              // ),
+              // المقبض المنزلق (الجزء المتحرك)
+              AnimatedPositioned(
+                duration: const Duration(
+                    milliseconds:
+                        0), // يتم التحكم في الحركة بواسطة الرسوم المتحركة وليس مدة الموضع المتحرك
+                curve: Curves.easeInOut,
+                left: _isOnline ? thumbPosition - 2 : thumbPosition - 8,
+                child: Container(
+                  width: _thumbWidth,
+                  height: _trackHeight -
+                      6, // أصغر قليلاً من الارتفاع الكلي لخلق تأثير "الداخل"
+                  margin: const EdgeInsets.all(3.0), // هامش لتبدو داخل المسار
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        (_trackHeight - 6) / 2), // حواف دائرية للمقبض
+                    color: thumbColor,
+                  ),
+                  child: Center(
+                    child: Text(
+                      _isOnline ? 'Online' : 'Offline',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

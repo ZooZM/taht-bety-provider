@@ -7,6 +7,7 @@ import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:taht_bety_provider/core/widgets/custom_cushed_image.dart';
 import 'package:taht_bety_provider/core/widgets/show_custom_choose_image_source.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/fetch_provider_cubit.dart';
 import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 class ServProfImage extends StatelessWidget {
@@ -26,9 +27,7 @@ class ServProfImage extends StatelessWidget {
                 SnackBar(content: Text(state.failureMssg)),
               );
             } else if (state is UpdateProviderSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Profile updated successfully!")),
-              );
+              context.read<ProviderCubit>().fetchProvider();
             }
           },
           builder: (context, state) {

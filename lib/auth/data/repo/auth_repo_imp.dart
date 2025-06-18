@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
+import 'package:taht_bety_provider/auth/data/models/user/user.dart';
 import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/data/repo/auth_repo.dart';
 import 'package:taht_bety_provider/core/errors/failures.dart';
 import 'package:taht_bety_provider/core/utils/api_service.dart';
+import 'package:taht_bety_provider/core/utils/app_fun.dart';
+import 'package:taht_bety_provider/features/home/data/models/provider_model/provider_model.dart';
 
 class AuthRepoImp implements AuthRepo {
   final ApiService apiService;
@@ -41,7 +44,25 @@ class AuthRepoImp implements AuthRepo {
           return Left(Serverfailure(
               "You are not allowed to sign in as a non-provider."));
         }
-
+        await UserStorage.saveUserData(
+          token: user.token,
+          userId: user.userId,
+          name: user.name,
+          email: user.email,
+          photo: user.photo,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          region: user.region,
+          age: user.age,
+          gender: user.gender,
+          verificationCodeExpiresAt: user.lastPhotoAt,
+          idFrontSide: user.idFrontSide,
+          idBackSide: user.idBackSide,
+          isActive: user.isActive,
+          isOnline: user.isOnline,
+          type: user.type,
+          providerId: user.providerId,
+        );
         try {
           final response =
               await apiService.get(endPoint: 'providers/${user.userId}');
@@ -54,14 +75,38 @@ class AuthRepoImp implements AuthRepo {
             user.providerId = providerData['_id'];
             user.isActive = providerData['isActive'] ?? false;
             user.isOnline = providerData['isOnline'] ?? false;
-            user.verificationCodeExpiresAt = DateTime.parse(
-                providerData['verificationCodeExpiresAt'] ??
-                    DateTime.now().toIso8601String());
+            user.lastPhotoAt = DateTime.parse(providerData['lastPhotoAt'] ??
+                DateTime.now().toIso8601String());
           } else {
-            return Left(Serverfailure(user.email));
+            if (response['message'] != null) {
+              String failMes = response['message'];
+              if (failMes
+                  .toLowerCase()
+                  .contains('no provider found with that id')) {
+                return Left(Serverfailure(user.email));
+              } else {
+                return Left(Serverfailure(response['message']));
+              }
+            } else {
+              return Left(Serverfailure('Failed to sign in'));
+            }
           }
-        } catch (e) {
-          return Left(Serverfailure('Failed to sign in'));
+        } on DioException catch (e) {
+          if (e.response != null && e.response!.data is Map<String, dynamic>) {
+            String failMes = e.response!.data['message'] ?? '';
+            if (failMes
+                .toLowerCase()
+                .contains('no provider found with that id')) {
+              return Left(Serverfailure(user.email));
+            }
+            if (e.response!.data['error_code'] == "A4000") {
+              return Left(Serverfailure("Please verify your email first."));
+            } else {
+              return Left(Serverfailure(e.response!.data['message'] ??
+                  'An error occurred during sign in'));
+            }
+          }
+          return Left(Serverfailure(e.toString()));
         }
         await UserStorage.saveUserData(
           token: user.token,
@@ -74,7 +119,7 @@ class AuthRepoImp implements AuthRepo {
           region: user.region,
           age: user.age,
           gender: user.gender,
-          verificationCodeExpiresAt: user.verificationCodeExpiresAt,
+          verificationCodeExpiresAt: user.lastPhotoAt,
           idFrontSide: user.idFrontSide,
           idBackSide: user.idBackSide,
           isActive: user.isActive,
@@ -82,6 +127,12 @@ class AuthRepoImp implements AuthRepo {
           type: user.type,
           providerId: user.providerId,
         );
+        final now = DateTime.now();
+        final difference = now.difference(user.lastPhotoAt!);
+
+        if (difference.inDays > 2 && AppFun.needId(user.type!)) {
+          return left(Serverfailure('need verify'));
+        }
         return Right(user);
       } else {
         return Left(Serverfailure('Failed to sign in'));
@@ -154,7 +205,7 @@ class AuthRepoImp implements AuthRepo {
           region: user.region,
           age: user.age,
           gender: user.gender,
-          verificationCodeExpiresAt: user.verificationCodeExpiresAt,
+          verificationCodeExpiresAt: user.lastPhotoAt,
           idFrontSide: user.idFrontSide,
           idBackSide: user.idBackSide,
           isActive: user.isActive,
@@ -210,7 +261,7 @@ class AuthRepoImp implements AuthRepo {
             user.providerId = providerData['_id'];
             user.isActive = providerData['isActive'] ?? false;
             user.isOnline = providerData['isOnline'] ?? false;
-            user.verificationCodeExpiresAt =
+            user.lastPhotoAt =
                 DateTime.parse(providerData['verificationCodeExpiresAt']);
           } else {
             return Left(Serverfailure(user.email));
@@ -229,7 +280,7 @@ class AuthRepoImp implements AuthRepo {
           region: user.region,
           age: user.age,
           gender: user.gender,
-          verificationCodeExpiresAt: user.verificationCodeExpiresAt,
+          verificationCodeExpiresAt: user.lastPhotoAt,
           idFrontSide: user.idFrontSide,
           idBackSide: user.idBackSide,
           isActive: user.isActive,
@@ -262,6 +313,19 @@ class AuthRepoImp implements AuthRepo {
         'file': await MultipartFile.fromFile(frontImage.path),
         // 'backImage': await MultipartFile.fromFile(backImage.path),
       });
+      final listFiles = <File>[
+        frontImage,
+        backImage,
+      ];
+      String frontImage64 = await AppFun.imageToBase64(frontImage);
+      String backImage64 = await AppFun.imageToBase64(backImage);
+
+      UserStorage.updateUserData(
+        idFrontSide: frontImage64,
+        idBackSide: backImage64,
+      );
+
+      return Right(listFiles);
 
       final response = await Dio().post(
         'https://e754-41-234-5-74.ngrok-free.app/predict',
@@ -293,15 +357,17 @@ class AuthRepoImp implements AuthRepo {
   }
 
   @override
-  Future<Either<Failure, File>> createFaceID(File photo) async {
+  Future<Either<Failure, File>> createFaceID(
+      {required File photo, required bool isSignUp}) async {
     String errorMessage =
         'An error occurred during create face ID, please try again or take clear photo';
-
+    String checkState = isSignUp ? 'signUp' : 'verify';
     try {
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(photo.path),
       });
 
+      return Right(photo);
       final response = await Dio().post(
         'https://fe60-41-234-5-74.ngrok-free.app/verify',
         data: formData,
@@ -313,6 +379,75 @@ class AuthRepoImp implements AuthRepo {
         return Left(Serverfailure(errorMessage));
       }
     } on DioException catch (e) {
+      return Left(Serverfailure(errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ProviderModel>> createProvider(
+      {required bool isActive}) async {
+    try {
+      final saveduser = UserStorage.getUserData();
+      final userresponse =
+          await apiService.get(endPoint: 'users/me', token: saveduser.token);
+      final userData = User.fromJson(userresponse['data']['user']);
+      final response = await apiService.post(
+        endPoint: 'providers',
+        data: {
+          "providerType":
+              saveduser.type == '' ? 'F-Restaurants' : saveduser.type,
+          "subscriptionType": "percentage",
+          "subscriptionPercentage": 10,
+          "isActive": isActive,
+          "isOnline": false,
+          "reports": [],
+          "locations": [
+            {
+              "coordinates": {
+                "type": "Point",
+                "coordinates": [
+                  userData.locations?[0].coordinates.coordinates[0] ?? 0.0,
+                  userData.locations?[0].coordinates.coordinates[1] ?? 0.0,
+                ]
+              },
+              "address": userData.locations?[0].address ?? '',
+            }
+          ]
+        },
+        token: saveduser.token,
+      );
+
+      if (response['message'] == 'success') {
+        final provider = ProviderModel.fromJson(response['provider']);
+        File frontId =
+            await AppFun.base64ToFile(saveduser.idFrontSide!, 'idFrontSide');
+        File backId =
+            await AppFun.base64ToFile(saveduser.idFrontSide!, 'idBackSide');
+        final formData = FormData.fromMap({
+          'id': [
+            await MultipartFile.fromFile(frontId.path),
+            await MultipartFile.fromFile(backId.path),
+          ],
+        });
+        final idResonse = await apiService.put(
+          endPoint: 'providers/${provider.providerId}/uploadID',
+          data: formData,
+          token: saveduser.token,
+        );
+
+        await UserStorage.updateUserData(
+          providerId: provider.providerId,
+        );
+
+        return Right(provider);
+      } else {
+        return Left(Serverfailure(response['message'] ?? 'Signup failed.'));
+      }
+    } on DioException catch (e) {
+      String errorMessage = 'An error occurred during sign up';
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        errorMessage = e.response!.data['message'] ?? errorMessage;
+      }
       return Left(Serverfailure(errorMessage));
     }
   }

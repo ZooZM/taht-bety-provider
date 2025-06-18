@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
 
 import '../../../../../auth/presentation/view/widgets/back_button_circle.dart';
@@ -36,7 +34,7 @@ class _AddProductFState extends State<AddProductF> {
         child: BlocListener<ProductCubit, ProductState>(
           listener: (context, state) {
             if (state is ProductSuccess) {
-                  setState(() {
+              setState(() {
                 loadingIndicator = false;
               });
               context.push(AppRouter.kHomePage);
@@ -44,12 +42,9 @@ class _AddProductFState extends State<AddProductF> {
                 const SnackBar(content: Text('Product added successfully')),
               );
             } else if (state is ProductLoading) {
-        
-              
               setState(() {
                 loadingIndicator = true;
               });
-       
             } else if (state is ProductFailure) {
               setState(() {
                 loadingIndicator = false;
@@ -160,68 +155,36 @@ class _AddProductFState extends State<AddProductF> {
                   controller: priceController,
                   label: 'Price :',
                   hint: 'Enter price',
+                  isNum: true,
                 ),
-
-                // Extras Field + Plus Icon
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: LabeledField(
-                          label: 'Extras :',
-                          hint: 'Extra details',
-                          width: screenWidth * 0.5,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color(0xFFCFD9E9),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.add,
-                          size: 24,
-                          color: Color(0xFF3A4D6F),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
 
                 // Add Button
                 SizedBox(
                   width: screenWidth * 0.3,
                   height: 60,
                   child: ElevatedButton(
+                    onPressed: loadingIndicator
+                        ? () {}
+                        : () {
+                            if (nameController.text.isEmpty ||
+                                descriptionController.text.isEmpty ||
+                                priceController.text.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Please fill all fields')),
+                              );
+                              return;
+                            }
 
-                    onPressed: loadingIndicator?(){}: () {
-
-                      if (nameController.text.isEmpty ||
-                          descriptionController.text.isEmpty ||
-                          priceController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Please fill all fields')),
-                        );
-                        
-                      }
-
-                      context.read<ProductCubit>().addProduct(
-                            title: nameController.text,
-                            content: descriptionController.text,
-                            price: double.tryParse(priceController.text) ?? 0.0,
-                            images: images,
-                          );
-                    },
+                            context.read<ProductCubit>().addProduct(
+                                  title: nameController.text,
+                                  content: descriptionController.text,
+                                  price:
+                                      double.tryParse(priceController.text) ??
+                                          0.0,
+                                  images: images,
+                                );
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF3A4D6F),
                       shape: RoundedRectangleBorder(
@@ -245,8 +208,8 @@ class _AddProductFState extends State<AddProductF> {
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFFCFD9E9),
-                      ),
-                    ),
+                            ),
+                          ),
                   ),
                 ),
 

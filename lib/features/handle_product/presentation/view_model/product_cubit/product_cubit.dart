@@ -7,7 +7,6 @@ import 'package:taht_bety_provider/features/home/data/models/provider_model/post
 
 import '../../../../home/data/repos/provider_profile_repo.dart';
 
-
 part 'product_state.dart';
 
 class ProductCubit extends Cubit<ProductState> {
@@ -33,7 +32,7 @@ class ProductCubit extends Cubit<ProductState> {
       emit(AddProduct());
       post.fold(
         (failure) => emit(ProductFailure(failure.failurMsg)),
-        (post) => emit(ProductSuccess(post)),
+        (post) => emit(ProductSuccess()),
       );
     } catch (e) {
       emit(ProductFailure(e.toString()));
@@ -49,18 +48,16 @@ class ProductCubit extends Cubit<ProductState> {
         content: product.content!,
         price: product.price!.toDouble(),
         images: product.images!,
-        isMainService: product.isMainService!,
+        isMainService: true,
       );
       emit(UpdateProduct());
       post.fold(
         (failure) => emit(ProductFailure(failure.failurMsg)),
-        (post) => emit(ProductSuccess(post)),
+        (post) => emit(ProductSuccess()),
       );
     } catch (e) {
       emit(ProductFailure(e.toString()));
     }
-  
-      
   }
 
   Future<void> deleteProduct({required String postId}) async {
@@ -72,7 +69,7 @@ class ProductCubit extends Cubit<ProductState> {
       emit(DeleteProduct());
       post.fold(
         (failure) => emit(ProductFailure(failure.failurMsg)),
-        (post) => emit(ProductSuccess(post)),
+        (post) => emit(ProductSuccess()),
       );
     } catch (e) {
       emit(ProductFailure(e.toString()));

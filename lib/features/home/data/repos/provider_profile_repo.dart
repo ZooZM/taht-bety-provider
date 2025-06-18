@@ -6,7 +6,7 @@ import '../models/provider_model/post.dart';
 
 abstract class ProviderProfileRepo {
   Future<Either<Failure, ProviderModel>> fetchProvider();
-   Future<Either<Failure, Post>> addProduct({
+  Future<Either<Failure, Post>> addProduct({
     required String title,
     required String content,
     required double price,
@@ -21,11 +21,12 @@ abstract class ProviderProfileRepo {
     required List<String> images,
     required bool isMainService,
   });
-  Future<Either<Failure, Post>> deleteProduct({
+  Future<Either<Failure, void>> deleteProduct({
     required String postId,
   });
   Future<Either<Failure, void>> updateProviderImage(String image);
   Future<Either<Failure, void>> updateProviderName(String name);
-  Future<Either<Failure, void>> updateProviderState(
+  Future<Either<Failure, ProviderModel>> updateProviderState(
       bool isOnline, String providerId);
+  Future<Either<Failure, void>> updateProviderLast(String name);
 }

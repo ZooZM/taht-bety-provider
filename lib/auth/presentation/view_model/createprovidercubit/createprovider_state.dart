@@ -12,11 +12,11 @@ final class CreateproviderInitial extends CreateproviderState {}
 final class CreateproviderLoading extends CreateproviderState {}
 
 final class CreateproviderSuccess extends CreateproviderState {
-  final String email;
-  const CreateproviderSuccess(this.email);
+  final ProviderModel provider;
+  const CreateproviderSuccess(this.provider);
 
   @override
-  List<Object> get props => [email];
+  List<Object> get props => [provider];
 }
 
 final class CreateproviderFailure extends CreateproviderState {

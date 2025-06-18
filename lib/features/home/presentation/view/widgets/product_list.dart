@@ -8,9 +8,6 @@ import 'package:taht_bety_provider/features/home/presentation/view/widgets/produ
 
 import '../../../../../core/utils/app_router.dart';
 
-
-
-
 class ProductList extends StatelessWidget {
   const ProductList({
     super.key,
@@ -31,12 +28,11 @@ class ProductList extends StatelessWidget {
           const CircularProgressIndicator(
             color: kPrimaryColor,
           );
-        } else if (state is ProductSuccess) {
+        } else if (state is DeleteProduct) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Product Deleted successfully')),
           );
         }
-
       },
       child: Column(
         children: List.generate(
@@ -76,21 +72,26 @@ class ProductList extends StatelessWidget {
                   context.read<ProductCubit>().deleteProduct(
                         postId: provider.posts![index].id!,
                       );
-              
-                } else if (direction == DismissDirection.endToStart) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Edit")),
-                  );
-context.push(
-                      AppRouter.kUpdateProductF,
-                      extra: {provider.providerType: provider.posts![index]},
-                    );
-
-
-
-
-
                 }
+                // else if (direction == DismissDirection.endToStart) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text("Edit")),
+                //   );
+                //   context.push(
+                //     AppRouter.kUpdateProduct,
+                //     extra: {provider.providerType: provider.posts![index]},
+                //   );
+                // }
+              },
+              confirmDismiss: (direction) async {
+                if (direction == DismissDirection.endToStart) {
+                  context.push(
+                    AppRouter.kUpdateProduct,
+                    extra: {provider.providerType: provider.posts![index]},
+                  );
+                  return false;
+                }
+                return true;
               },
               child: Padding(
                 padding:

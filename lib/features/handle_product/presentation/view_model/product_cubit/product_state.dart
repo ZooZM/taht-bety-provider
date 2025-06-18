@@ -8,19 +8,18 @@ sealed class ProductState extends Equatable {
 }
 
 final class ProductInitial extends ProductState {}
+
 final class ProductLoading extends ProductState {}
-final class ProductSuccess extends ProductState {
-  final Post product;
-  const ProductSuccess(this.product);
-}
+
+final class ProductSuccess extends ProductState {}
+
 final class ProductFailure extends ProductState {
   final String failureMssg;
   const ProductFailure(this.failureMssg);
+}
 
-}
-final class AddProduct extends ProductState {
-}
-final class UpdateProduct extends ProductState {
-}
-final class DeleteProduct extends ProductState {
-}
+final class AddProduct extends ProductState {}
+
+final class UpdateProduct extends ProductState {}
+
+final class DeleteProduct extends ProductState {}

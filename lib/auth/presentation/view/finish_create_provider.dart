@@ -1,17 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taht_bety_provider/auth/data/models/provider_curuser.dart';
+import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/main_button.dart';
+import 'package:taht_bety_provider/auth/presentation/view_model/createprovidercubit/createprovider_cubit.dart';
+import 'package:taht_bety_provider/core/utils/app_router.dart';
+import 'package:taht_bety_provider/core/utils/styles.dart';
 
-class FinishCreateProvider extends StatelessWidget {
+class FinishCreateProvider extends StatefulWidget {
   const FinishCreateProvider({super.key});
 
   @override
+  State<FinishCreateProvider> createState() => _FinishCreateProviderState();
+}
+
+class _FinishCreateProviderState extends State<FinishCreateProvider> {
+  final TextEditingController addressController = TextEditingController();
+  late ProviderCurUser? user;
+  bool isLoading = false;
+  @override
+  void initState() {
+    user = UserStorage.getUserData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final address = GoRouterState.of(context).extra as String?;
+    if (address != null) {
+      addressController.text = address;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: BlocListener<CreateproviderCubit, CreateproviderState>(
+          listener: (context, state) {
+            if (state is CreateproviderLoading) {
+              setState(() {
+                isLoading = true;
+              });
+            } else if (state is CreateproviderFailure) {
+              setState(() {
+                isLoading = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  duration: const Duration(seconds: 5),
+                ),
+              );
+            } else if (state is CreateproviderSuccess) {
+              setState(() {
+                isLoading = false;
+              });
+              context.go(AppRouter.kHomePage);
+            }
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -30,37 +76,30 @@ class FinishCreateProvider extends StatelessWidget {
               ),
 
               const SizedBox(height: 30),
-
               const Center(
                 child: Text(
-                  "Set your Location here !",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  'Ready For Create Provider Account?',
+                  style: Styles.subtitle18Bold,
                 ),
               ),
+              const Spacer(),
 
-              const SizedBox(height: 30),
-
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Add your address',
-                  prefixIcon: const Icon(Icons.location_on_outlined),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+              Center(
+                child: Image.asset(
+                  'assets/icons/finish.png',
+                  height: 200,
                 ),
               ),
-
               const Spacer(),
 
               MainButton(
-                label: "Next",
-                onPressed: () {
-                  // Handle next action
+                label: "Create",
+                onPressed: () async {
+                  await context
+                      .read<CreateproviderCubit>()
+                      .createProvider(true);
                 },
+                isLoading: isLoading,
               ),
 
               const SizedBox(height: 20),

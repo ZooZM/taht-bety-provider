@@ -181,6 +181,11 @@ class _SignInScreenState extends State<SignInScreen> {
                             context.go(AppRouter.kVerifyCodeScreen,
                                 extra: _emailController.text);
                           }
+                          if (state.message
+                              .toLowerCase()
+                              .contains('need verify')) {
+                            context.go(AppRouter.kTakeSelfie, extra: false);
+                          }
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(state.message),

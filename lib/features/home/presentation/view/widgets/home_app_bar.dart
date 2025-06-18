@@ -12,13 +12,15 @@ class HomeAppBar extends StatelessWidget {
   final bool isOnline;
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         children: [
           SlidingToggleSwitch(
             providerId: providerId,
             isOnline: isOnline,
+            trackWidth: size.width / 3,
           ),
           const Spacer(flex: 1),
           const Center(

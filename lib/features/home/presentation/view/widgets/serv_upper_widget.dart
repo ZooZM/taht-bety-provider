@@ -11,7 +11,9 @@ import 'package:taht_bety_provider/features/home/presentation/view/widgets/home_
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_prof_image.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_profile_info.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/upper_widget_loading.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/fetch_provider_cubit.dart';
 import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_state_cubit.dart';
 
 class ServUpperWidget extends StatefulWidget {
   const ServUpperWidget({super.key, required this.provider});
@@ -46,11 +48,7 @@ class _ServUpperWidgetState extends State<ServUpperWidget> {
             SnackBar(content: Text(state.failureMssg)),
           );
         } else if (state is UpdateProviderSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Profile updated successfully!")),
-          );
-
-          setState(() {});
+          context.read<ProviderCubit>().fetchProvider();
         }
       },
       builder: (context, state) {
@@ -67,7 +65,7 @@ class _ServUpperWidgetState extends State<ServUpperWidget> {
             ),
             SizedBox(
               width: cWidth,
-              height: cHeight,
+              height: cHeight + 5,
               // https://s3-alpha-sig.figma.com/img/b741/297c/49ff74de02ee0013dd84741b92dde045?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=M1HyrlHyeCZ2W~U734U7WIad301pSaZWbfwpthUSnmJAvXmRTji~Sgd27RlFWj7Vx0yilKHATFGFobLZQgoMd0m428344Za0ix1c4Mc3dHuR9EVAJNwivO4uG5xL4D1BTRONCzIXtdNGMW~JCTmmwMflSdDOU-7SH1OMSPs6xu8Mn-UO5S8tzVOjTj~tk-QB5vxN1nZDsH8lfkxqxoBuw7JKim0Csto9v4K~HGK~Gv7gkVp~F71t-lDcZTg-x3MBGiFPZTmU4i3Tfm5Hr4o04HaapD-O45s2e~CXfTPOFj0CAx0FPs7Kydn6fSvkr3R-RwWlSLH8uL2nmGkMHUV3BQ__
               child: Stack(
                 children: [

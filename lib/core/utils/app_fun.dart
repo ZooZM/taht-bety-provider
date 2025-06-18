@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -65,6 +67,35 @@ class AppFun {
       return file;
     } else {
       throw Exception('No image selected');
+    }
+  }
+
+  static bool needId(String selectedType) {
+    String type = selectedType.split('-')[0].toUpperCase();
+    if (type == 'R' || type == 'HW') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<String> networkImageToBase64(String imageUrl) async {
+    try {
+      final response = await Dio().get(
+        imageUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Uint8List bytes = response.data;
+        final base64Image = 'data:image/jpeg;base64,${base64Encode(bytes)}';
+        return base64Image;
+      } else {
+        throw Exception('Failed to load image from network');
+      }
+    } catch (e) {
+      print('Error converting network image to base64: $e');
+      rethrow;
     }
   }
 }

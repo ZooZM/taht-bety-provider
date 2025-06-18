@@ -17,7 +17,7 @@ import '../widgets/labled_field.dart';
 class UpdateProductF extends StatefulWidget {
   UpdateProductF({
     Key? key,
-     this.post,
+    this.post,
   }) : super(key: key);
   final Post? post;
   @override
@@ -25,21 +25,21 @@ class UpdateProductF extends StatefulWidget {
 }
 
 class _UpdateProductFState extends State<UpdateProductF> {
-
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-    final TextEditingController priceController = TextEditingController();
-    List<File>? images;
-    @override
-    void initState() {
-      super.initState();
-      if (widget.post != null) {
-        nameController.text = widget.post!.title ?? '';
-        descriptionController.text = widget.post!.content ?? '';
-        priceController.text = widget.post!.price?.toString() ?? '';
-        images = widget.post!.images?.map((e) => File(e)).toList() ?? [];
-      }
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  List<File>? images;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.post != null) {
+      nameController.text = widget.post!.title ?? '';
+      descriptionController.text = widget.post!.content ?? '';
+      priceController.text = widget.post!.price?.toString() ?? '';
+      images = widget.post!.images?.map((e) => File(e)).toList() ?? [];
     }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -50,7 +50,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
       body: SafeArea(
         child: BlocListener<ProductCubit, ProductState>(
           listener: (context, state) {
-            if (state is ProductSuccess) {
+            if (state is UpdateProduct) {
               context.push(AppRouter.kHomePage);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Product added successfully')),
@@ -79,7 +79,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
                   height: screenWidth * 0.25,
                   child: ListView.builder(
                     itemBuilder: (context, index) {
-                      if (index < images!.length) {
+                      if (index < (images?.length ?? 0)) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
@@ -134,7 +134,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
                                 )));
                       }
                     },
-                    itemCount: images!.length + 1,
+                    itemCount: images?.length ?? 0 + 1,
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                   ),

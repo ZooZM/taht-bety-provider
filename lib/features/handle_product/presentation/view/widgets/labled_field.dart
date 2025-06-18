@@ -6,8 +6,9 @@ class LabeledField extends StatelessWidget {
   final String hint;
   final double? height;
   final int? maxLines;
+  final bool isNum;
   double? width;
-TextEditingController? controller;
+  TextEditingController? controller;
   LabeledField({
     super.key,
     required this.label,
@@ -16,6 +17,7 @@ TextEditingController? controller;
     this.maxLines = 1,
     this.width,
     this.controller,
+    this.isNum = false,
   });
 
   @override
@@ -31,10 +33,9 @@ TextEditingController? controller;
       margin: EdgeInsets.symmetric(vertical: verticalMargin),
       width: screenWidth * 0.9,
       child: Row(
-        crossAxisAlignment:
-            maxLines! > 1
-                ? CrossAxisAlignment.start
-                : CrossAxisAlignment.center,
+        crossAxisAlignment: maxLines! > 1
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           SizedBox(
             width: labelWidth,
@@ -48,7 +49,6 @@ TextEditingController? controller;
               ),
             ),
           ),
-
           Container(
             width: fieldWidth,
             height: height,
@@ -60,6 +60,8 @@ TextEditingController? controller;
             child: TextFormField(
               controller: controller,
               maxLines: maxLines,
+              keyboardType:
+                  isNum ? const TextInputType.numberWithOptions() : null,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: hint,

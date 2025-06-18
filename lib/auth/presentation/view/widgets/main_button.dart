@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/widgets/custom_circular_progress.dart';
 
 class MainButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
-  const MainButton({super.key, required this.label, required this.onPressed});
+  final bool isLoading;
+  const MainButton(
+      {super.key,
+      required this.label,
+      required this.onPressed,
+      this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: MaterialButton(
         onPressed: onPressed,
         height: 60,
         minWidth: double.infinity,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        color: const Color(0xFF3A4D6F),
+        color: isLoading ? kGray : const Color(0xFF3A4D6F),
         elevation: 4,
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
+        child: isLoading
+            ? const CustomCircularprogress(size: 25)
+            : Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:taht_bety_provider/auth/data/models/user_strorge.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/category_card.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_button.dart';
-import 'package:taht_bety_provider/auth/presentation/view_model/cubit/createprovider_cubit.dart';
+import 'package:taht_bety_provider/auth/presentation/view_model/createprovidercubit/createprovider_cubit.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:go_router/go_router.dart';
@@ -90,7 +90,9 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
               });
               bool success = await _saveIdImageAndType();
               if (success) {
-                context.push(AppRouter.kTakeSelfie);
+                needId()
+                    ? context.push(AppRouter.kTakeSelfie)
+                    : context.push(AppRouter.kMaps);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Failed to save ID images')),
