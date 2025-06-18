@@ -11,7 +11,7 @@ import 'package:taht_bety_provider/features/maps/presentation/view/display_maps.
 import 'package:taht_bety_provider/features/product/presentation/view/category_details_screen.dart';
 
 import '../../features/handle_product/presentation/view/screens/add_product_f.dart';
-import '../../features/handle_product/presentation/view/screens/add_product_hc.dart';
+
 import '../../features/handle_product/presentation/view/screens/add_product_m.dart';
 import '../../features/handle_product/presentation/view/screens/add_product_r.dart';
 import '../../features/orders/presentation/view/order_details_screen.dart';
@@ -32,7 +32,7 @@ abstract class AppRouter {
   static const String kFinishCreateProvider = '/finishcreateprovider';
   static const String kAddProductF = '/addproductF';
   static const String kAddProductM = '/addproductM';
-  static const String kAddProductHC = '/addproductHC';
+ 
   static const String kAddProductR = '/addproductR';
   static const String kUpdateProduct = '/updateproduct';
   static const String kOrdersScreen = '/ordersScreen';
@@ -84,10 +84,7 @@ abstract class AppRouter {
       path: kAddProductM,
       builder: (context, state) => const AddProductM(),
     ),
-    GoRoute(
-      path: kAddProductHC,
-      builder: (context, state) => const AddProductHC(),
-    ),
+
     GoRoute(
       path: kAddProductR,
       builder: (context, state) => const AddProductR(),

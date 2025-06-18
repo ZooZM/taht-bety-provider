@@ -61,9 +61,40 @@ class ProductCard extends StatelessWidget {
               SizedBox(
                 width: imageWidth,
                 height: imageHeight,
-                child: Stack(
+                child: post.images?.isEmpty ?? true
+                    ? const Center(
+                        child: Text(
+                          'No Image',
+                          style: Styles.subtitle18Bold,
+                        ),
+                      )
+                    : post.images == null || post.images!.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No Image',
+                              style: Styles.subtitle18Bold,
+                            ),
+                          ):
+                Stack(
                   fit: StackFit.expand,
                   children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: Colors.black26,
+                      ),
+                      child: post.images!.length > 1
+                          ? Center(
+                              child: Text(
+                                '${post.images!.length} images',
+                                style: Styles.subtitle18Bold.copyWith(
+                                  color: kWhite,
+                                ),
+                              ),
+                            )
+                          : null,
+                 
+                    ),
                     CustomCushedImage(
                       image: post.images![0],
                       height: imageHeight,

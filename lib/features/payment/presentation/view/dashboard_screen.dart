@@ -27,24 +27,19 @@ class DashboardScreen extends StatelessWidget {
       ],
     };
 
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: width * 0.06, vertical: height * 0.02),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: height * 0.03),
+              const SizedBox(height: 24),
 
-              // Wallet
+              /// Wallet Card
               Container(
-                padding: EdgeInsets.all(width * 0.05),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: const Color(0xFF3A4D6F),
                   borderRadius: BorderRadius.circular(16),
@@ -52,31 +47,31 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.account_balance_wallet_outlined,
-                            color: Colors.white, size: width * 0.05),
-                        SizedBox(width: width * 0.02),
+                            color: Colors.white, size: 20),
+                        SizedBox(width: 8),
                         Text(
                           "wallet",
                           style: TextStyle(
-                            fontSize: width * 0.035,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: height * 0.02),
-                    Text(
+                    const SizedBox(height: 12),
+                    const Text(
                       "-EGP 125.78",
                       style: TextStyle(
-                        fontSize: width * 0.05,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: height * 0.02),
+                    const SizedBox(height: 12),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -107,159 +102,89 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: height * 0.03),
+              const SizedBox(height: 24),
 
-              // Transactions
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(width * 0.045),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFCFD9E9)),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Transactions",
-                          style: TextStyle(
-                            fontSize: width * 0.042,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF15243F),
-                          ),
+              /// Transactions List
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFCFD9E9)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Transactions",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF15243F),
                         ),
                       ),
-                      ...groupedTransactions.entries.expand((entry) {
-                        return [
-                          Flexible(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                entry.key,
-                                style: TextStyle(
-                                  fontSize: width * 0.038,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF15243F),
-                                ),
+                    ),
+                    const SizedBox(height: 12),
+                    ...groupedTransactions.entries.expand((entry) {
+                      return [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              entry.key,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF15243F),
                               ),
                             ),
                           ),
-                          ...entry.value.map((item) => TransactionRow(
-                                item,
-                                fontSize: width * 0.036,
-                                spacing: width * 0.04,
-                              )),
-                        ];
-                      }),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const TransactionsScreen(),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "See All",
-                              style: TextStyle(
-                                fontSize: width * 0.035,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF3A4D6F),
-                              ),
-                            ),
-                            Icon(Icons.arrow_forward_ios,
-                                size: width * 0.035,
-                                color: const Color(0xFF3A4D6F)),
-                          ],
                         ),
-                      )
-                    ],
-                  ),
+                        ...entry.value.map((item) => Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 6),
+                              child: TransactionRow(
+                                item,
+                                fontSize: 14,
+                                spacing: 16,
+                              ),
+                            )),
+                      ];
+                    }),
+                    const Divider(height: 20),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TransactionsScreen(),
+                          ),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "See All",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF3A4D6F),
+                            ),
+                          ),
+                          Icon(Icons.arrow_forward_ios,
+                              size: 14, color: Color(0xFF3A4D6F)),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class TransactionItem {
-  final IconData icon;
-  final String label;
-  final String amount;
-  final String time;
-
-  TransactionItem({
-    required this.icon,
-    required this.label,
-    required this.amount,
-    required this.time,
-  });
-}
-
-class TransactionRow extends StatelessWidget {
-  final TransactionItem item;
-  final double fontSize;
-  final double spacing;
-
-  const TransactionRow(
-    this.item, {
-    super.key,
-    required this.fontSize,
-    required this.spacing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: spacing * 0.5,
-              backgroundColor: const Color(0xFFE5EAF2),
-              child: Icon(item.icon,
-                  size: fontSize, color: const Color(0xFF3A4D6F)),
-            ),
-            Text(
-              item.label,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF15243F),
-              ),
-            ),
-          ],
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              item.amount,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF15243F),
-              ),
-            ),
-            Text(
-              item.time,
-              style: TextStyle(
-                fontSize: fontSize * 0.95,
-                color: const Color(0xFF99A8C2),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
