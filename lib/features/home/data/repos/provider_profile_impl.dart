@@ -53,13 +53,12 @@ class ProviderProfileImpl implements ProviderProfileRepo {
   }
 
   @override
-  Future<Either<Failure, User>> updateProviderImage(String image) async {
+  Future<Either<Failure, User>> updateProviderImage(
+      Map<String, dynamic> data) async {
     try {
       var response = await apiService.put(
         endPoint: 'users/update-me',
-        data: {
-          "photo": image,
-        },
+        data: data,
         token: UserStorage.getUserData().token,
       );
 

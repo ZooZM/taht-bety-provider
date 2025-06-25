@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taht_bety_provider/auth/presentation/view/finish_create_provider.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';

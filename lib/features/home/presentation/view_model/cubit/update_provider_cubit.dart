@@ -9,9 +9,9 @@ class UpdateProviderCubit extends Cubit<UpdateProviderState> {
       : super(UpdateProviderInitial());
   ProviderProfileRepo providerProfileRepo;
 
-  Future<void> updateProvider(String image) async {
+  Future<void> updateProvider(Map<String, dynamic> data) async {
     emit(UpdateProviderLoading());
-    var result = await providerProfileRepo.updateProviderImage(image);
+    var result = await providerProfileRepo.updateProviderImage(data);
     result.fold((failure) {
       emit(UpdateProviderFailure(failure.failurMsg));
     }, (data) {

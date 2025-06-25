@@ -37,12 +37,7 @@ class OrderCard extends StatelessWidget {
         context.push(
           AppRouter.kOrderDetails,
           extra: {
-            'orderNumber': order.id,
-            'name': order.userId?.name ?? '',
-            'phone': '+201118941774',
-            'address': 'New Cairo, Cairo',
-            'items': order.postId,
-            'des': order.description,
+            'order': order,
           },
         );
       },
@@ -72,7 +67,7 @@ class OrderCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'date',
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
@@ -90,7 +85,7 @@ class OrderCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      'Address: address',
+                      'Address: ${order.userId?.locations?[0].address ?? ''}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,

@@ -1,11 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taht_bety_provider/constants.dart';
+import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';
 import 'package:taht_bety_provider/core/widgets/custom_cushed_image.dart';
 import 'package:taht_bety_provider/core/widgets/custom_widget_loading.dart';
+import 'package:taht_bety_provider/core/widgets/show_custom_choose_image_source.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/home_app_bar.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_prof_image.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_profile_info.dart';
+import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 class UpperWidgetLoading extends StatelessWidget {
   const UpperWidgetLoading({
@@ -51,7 +57,7 @@ class UpperWidgetLoading extends StatelessWidget {
                   top: coverHeight + 10,
                   left: imageWidth + 20,
                   right: 12,
-                  child: ServProfileInfo(
+                  child: const ServProfileInfo(
                     name: "Provider Name",
                     address: " Address",
                     rate: 0.0,
@@ -61,7 +67,15 @@ class UpperWidgetLoading extends StatelessWidget {
                   top: 15,
                   right: 12,
                   child: InkWell(
-                    onTap: () async {},
+                    onTap: () async {
+                      // File? image = await showCustomChooseImageSource(context);
+                      // if (image != null) {
+                      //   String image64 = await AppFun.imageToBase64(image);
+                      //   print("Image64: $image64");
+                      //   BlocProvider.of<UpdateProviderCubit>(context)
+                      //       .updateProvider({'imageCover': image64});
+                      // }
+                    },
                     child: Container(
                       height: 40,
                       padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -10,7 +10,6 @@ import 'package:taht_bety_provider/auth/presentation/view/widgets/main_button.da
 import 'package:taht_bety_provider/auth/presentation/view_model/createprovidercubit/createprovider_cubit.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
-import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/fetch_provider_cubit.dart';
 import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 class TakeSelfieScreen extends StatefulWidget {
@@ -80,17 +79,17 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
                 _errorMessage = 'true';
               });
 
-              isSignUp0
-                  ? context.push(AppRouter.kMaps)
-                  : () async {
-                      final now = DateTime.now().toUtc();
-                      final isoString = now.toIso8601String() + 'Z';
+              if (isSignUp0) {
+                context.push(AppRouter.kMaps);
+              } else {
+                final now = DateTime.now().toUtc();
+                final isoString = now.toIso8601String();
 
-                      await context
-                          .read<UpdateProviderCubit>()
-                          .updateProvider(isoString);
-                      context.go(AppRouter.kHomePage);
-                    };
+                context
+                    .read<UpdateProviderCubit>()
+                    .updateProviderLastPhoto(isoString);
+                context.go(AppRouter.kHomePage);
+              }
             } else if (state is CreateFaceIdFailure) {
               setState(() {
                 _isLoading = false;
@@ -165,6 +164,10 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
                   onPressed: _isLoading
                       ? () {}
                       : () {
+                          context.read<CreateproviderCubit>().createFaceID(
+                                photo: File('file.path'),
+                                isSignUp: isSignUp ?? true,
+                              );
                           if (_controller != null &&
                               _controller!.value.isInitialized) {
                             _controller!.takePicture().then((XFile file) {

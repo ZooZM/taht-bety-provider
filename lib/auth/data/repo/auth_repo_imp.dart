@@ -362,12 +362,12 @@ class AuthRepoImp implements AuthRepo {
     String errorMessage =
         'An error occurred during create face ID, please try again or take clear photo';
     String checkState = isSignUp ? 'signUp' : 'verify';
+    return Right(photo);
     try {
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(photo.path),
       });
 
-      return Right(photo);
       final response = await Dio().post(
         'https://fe60-41-234-5-74.ngrok-free.app/verify',
         data: formData,

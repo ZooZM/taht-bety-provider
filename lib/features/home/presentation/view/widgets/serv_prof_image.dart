@@ -59,7 +59,7 @@ class ServProfImage extends StatelessWidget {
                 String image64 = await AppFun.imageToBase64(image);
 
                 BlocProvider.of<UpdateProviderCubit>(context)
-                    .updateProvider(image64);
+                    .updateProvider({'photo': image64});
               }
             },
             child: Container(

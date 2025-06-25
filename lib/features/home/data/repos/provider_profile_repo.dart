@@ -24,7 +24,7 @@ abstract class ProviderProfileRepo {
   Future<Either<Failure, void>> deleteProduct({
     required String postId,
   });
-  Future<Either<Failure, void>> updateProviderImage(String image);
+  Future<Either<Failure, void>> updateProviderImage(Map<String, dynamic> data);
   Future<Either<Failure, void>> updateProviderName(String name);
   Future<Either<Failure, ProviderModel>> updateProviderState(
       bool isOnline, String providerId);

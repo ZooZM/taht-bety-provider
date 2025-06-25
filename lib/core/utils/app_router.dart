@@ -105,12 +105,7 @@ abstract class AppRouter {
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return OrderDetailsScreen(
-          orderNumber: extra['orderNumber'],
-          name: extra['name'],
-          phone: extra['phone'],
-          address: extra['address'],
-          items: extra['items'],
-          description: extra['des'],
+          order: extra['order'],
         );
       },
     ),

@@ -24,6 +24,7 @@ class ProviderModel {
   String? name;
   String? email;
   String? photo;
+  String? coverPhoto;
   double? distance;
   double? avgRating;
   ProviderModel({
@@ -50,6 +51,7 @@ class ProviderModel {
     this.photo,
     this.distance,
     this.avgRating,
+    this.coverPhoto,
   });
 
   ProviderModel copyWith({
@@ -76,6 +78,7 @@ class ProviderModel {
     String? photo,
     double? distance,
     double? avgRating,
+    String? coverPhoto,
   }) {
     return ProviderModel(
       providerId: providerId ?? this.providerId,
@@ -103,6 +106,7 @@ class ProviderModel {
       photo: photo ?? this.photo,
       distance: distance ?? this.distance,
       avgRating: avgRating ?? this.avgRating,
+      coverPhoto: coverPhoto ?? this.coverPhoto,
     );
   }
 
@@ -151,6 +155,9 @@ class ProviderModel {
             : DateTime.parse(json['lastPhotoAt'] as String),
         photo: json['providerID'] is Map<String, dynamic>
             ? json['providerID']['photo'] as String?
+            : null,
+        coverPhoto: json['providerID'] is Map<String, dynamic>
+            ? json['providerID']['imageCover'] as String?
             : null,
         distance: (json['distance'] as num?)?.toDouble(),
         avgRating: (json['avgRating'] as num?)?.toDouble(),
