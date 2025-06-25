@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/widgets/custom_circular_progress.dart';
 import 'package:taht_bety_provider/core/widgets/custom_cushed_image.dart';
 import 'package:taht_bety_provider/features/handle_product/presentation/view_model/product_cubit/product_cubit.dart';
 import 'package:taht_bety_provider/features/home/data/models/provider_model/post.dart';
+
+import '../../../../../core/utils/app_router.dart';
 
 class ItemProductCard extends StatelessWidget {
   final Post post;
@@ -39,7 +42,13 @@ class ItemProductCard extends StatelessWidget {
                   bottom: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                       context.push(
+                    AppRouter.kUpdateProduct,
+                    extra: {'M': post},
+                  );
+                  
+                    },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
