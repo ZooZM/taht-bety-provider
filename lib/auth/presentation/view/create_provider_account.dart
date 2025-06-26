@@ -25,6 +25,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
   File? _frontImage;
   File? _backImage;
   bool _isLoading = false;
+  int _tryIndex = 0;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -44,7 +45,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
     }
   }
 
-  Future<bool> _saveIdImageAndType() async {
+  Future<bool> _saveIdImageAndType(bool isActive) async {
     try {
       String base64 = await AppFun.imageToBase64(_frontImage!);
       String backBase64 = '';
@@ -55,6 +56,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
         idFrontSide: base64,
         idBackSide: backBase64,
         type: _selectedType,
+        isActive: isActive,
       );
       return true;
     } catch (e) {
@@ -88,7 +90,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
               setState(() {
                 _isLoading = false;
               });
-              bool success = await _saveIdImageAndType();
+              bool success = await _saveIdImageAndType(true);
               if (success) {
                 needId()
                     ? context.push(AppRouter.kTakeSelfie)
@@ -101,9 +103,29 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
             } else if (state is CheckIdFailure) {
               setState(() {
                 _isLoading = false;
+                _tryIndex++;
               });
+              if (_tryIndex >= 0) {
+                bool success = await _saveIdImageAndType(true);
+                if (success) {
+                  needId()
+                      ? context.push(AppRouter.kTakeSelfie)
+                      : context.push(AppRouter.kMaps);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to save ID images')),
+                  );
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text(
+                          'Account will not Active untill any Admin make change.')),
+                );
+                return;
+              }
+
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+                SnackBar(content: Text('${state.message}, please try again')),
               );
             } else if (state is CheckIdLoading) {
               setState(() {
@@ -216,7 +238,7 @@ class _CreateProviderAccountState extends State<CreateProviderAccount> {
                               _backImage!,
                             );
                       } else {
-                        await _saveIdImageAndType();
+                        await _saveIdImageAndType(true);
                         context.push(AppRouter.kMaps);
                       }
                     },

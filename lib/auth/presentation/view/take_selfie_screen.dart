@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/back_button_circle.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/custom_title.dart';
@@ -27,14 +28,25 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
   @override
   void initState() {
     super.initState();
-    _initCamera();
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    var status = await Permission.camera.request();
+    if (status.isGranted) {
+      _initCamera();
+    } else {
+      setState(() {
+        _errorMessage = 'Camera permission denied';
+      });
+    }
   }
 
   Future<void> _initCamera() async {
     try {
       final cameras = await availableCameras();
       final frontCamera = cameras.firstWhere(
-        (camera) => camera.lensDirection == CameraLensDirection.back,
+        (camera) => camera.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -119,7 +131,9 @@ class _TakeSelfieScreenState extends State<TakeSelfieScreen> {
                     : Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 24),
-                        child: Expanded(
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: screenHeight * 0.6,
                           child: _controller != null &&
                                   _controller!.value.isInitialized
                               ? Stack(

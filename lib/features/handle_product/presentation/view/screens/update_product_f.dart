@@ -1,10 +1,8 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taht_bety_provider/auth/presentation/view/create_provider_account.dart';
 import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:taht_bety_provider/core/utils/app_router.dart';
@@ -120,7 +118,6 @@ class _UpdateProductFState extends State<UpdateProductF> {
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     if (index < postImages.length) {
-                      // صور قديمة من الباك (روابط)
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: _buildImageContainer(
@@ -249,7 +246,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
                       ),
                     );
                   } else if (state is UpdateProduct) {
-                 await   context.read<ProviderCubit>().fetchProvider();
+                    await context.read<ProviderCubit>().fetchProvider();
                     context.go(AppRouter.kHomePage);
                   }
                 },
@@ -274,9 +271,9 @@ class _UpdateProductFState extends State<UpdateProductF> {
                           Post newPost = widget.post!;
                           newPost.title = nameController.text;
                           newPost.content = descController.text;
-                          newPost.price = int.tryParse(
-                              priceFromController.text.trim()) ;
-                              
+                          newPost.price =
+                              int.tryParse(priceFromController.text.trim());
+
                           newPost.images = await prepareImagesForUpload();
                           await context
                               .read<ProductCubit>()

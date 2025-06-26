@@ -38,9 +38,6 @@ class _AddProductRState extends State<AddProductR> {
                 loadingIndicator = false;
               });
               context.push(AppRouter.kHomePage);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Product added successfully')),
-              );
             } else if (state is ProductLoading) {
               setState(() {
                 loadingIndicator = true;

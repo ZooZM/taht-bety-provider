@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:taht_bety_provider/constants.dart';
 
 import 'package:taht_bety_provider/features/home/presentation/view/chats.dart';
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         index: pageIndex,
         items: [
           CusttomPageIcon(
-            icon: Icons.dashboard_outlined,
+            icon: FontAwesomeIcons.wallet,
             isPressed: iconPressed[0],
           ),
           CusttomPageIcon(
@@ -63,11 +64,11 @@ class _HomePageState extends State<HomePage> {
             isPressed: iconPressed[1],
           ),
           CusttomPageIcon(
-            icon: Icons.document_scanner_outlined,
+            icon: Icons.inventory_outlined,
             isPressed: iconPressed[2],
           ),
           CusttomPageIcon(
-            icon: Icons.chat_outlined,
+            icon: FontAwesomeIcons.commentDots,
             isPressed: iconPressed[3],
           ),
         ],

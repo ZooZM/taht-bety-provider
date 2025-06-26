@@ -6,5 +6,6 @@
         "createprovider",
         "Serverfailure",
         "strorge"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

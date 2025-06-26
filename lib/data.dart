@@ -33,11 +33,6 @@ class Data {
         name: "F-Restaurants", hasCliced: false, icon: Icons.restaurant),
     CategoryModel(
         name: "M-Supermarket", hasCliced: false, icon: Icons.shopping_cart),
-    CategoryModel(name: "M-miqla", hasCliced: false, icon: Icons.local_dining),
-    CategoryModel(
-        name: "HC-Pharmacies", hasCliced: false, icon: Icons.local_pharmacy),
-    CategoryModel(
-        name: "HC-Clinics", hasCliced: false, icon: Icons.local_hospital),
   ];
   static List<String> categoresNames = [
     "R-Electric",
@@ -54,9 +49,6 @@ class Data {
     "HW-Dry cleaning",
     "F-Restaurants",
     "M-Supermarket",
-    "M-miqla",
-    "HC-Pharmacies",
-    "HC-Clinics"
   ];
 
   static ProviderModel provider = ProviderModel.fromJson({

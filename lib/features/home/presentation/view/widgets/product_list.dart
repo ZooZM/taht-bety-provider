@@ -28,11 +28,7 @@ class ProductList extends StatelessWidget {
           const CircularProgressIndicator(
             color: kPrimaryColor,
           );
-        } else if (state is DeleteProduct) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Product Deleted successfully')),
-          );
-        }
+        } else if (state is DeleteProduct) {}
       },
       child: Column(
         children: List.generate(

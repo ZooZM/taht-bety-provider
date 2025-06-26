@@ -31,7 +31,7 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -71,7 +71,7 @@ class DashboardScreen extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 26),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -142,8 +142,7 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ),
                         ...entry.value.map((item) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 6),
+                              padding: const EdgeInsets.symmetric(vertical: 6),
                               child: TransactionRow(
                                 item,
                                 fontSize: 14,

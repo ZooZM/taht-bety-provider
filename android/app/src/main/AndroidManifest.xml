@@ -5,7 +5,7 @@
 <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
 
     <application
-        android:label="taht_bety_provider"
+        android:label="Taht Bety Provider"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
                >

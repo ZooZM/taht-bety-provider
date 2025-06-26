@@ -320,15 +320,8 @@ class AuthRepoImp implements AuthRepo {
       String frontImage64 = await AppFun.imageToBase64(frontImage);
       String backImage64 = await AppFun.imageToBase64(backImage);
 
-      UserStorage.updateUserData(
-        idFrontSide: frontImage64,
-        idBackSide: backImage64,
-      );
-
-      return Right(listFiles);
-
       final response = await Dio().post(
-        'https://e754-41-234-5-74.ngrok-free.app/predict',
+        'https://1d48-41-43-177-204.ngrok-free.app/predict',
         data: formData,
       );
 
@@ -351,6 +344,12 @@ class AuthRepoImp implements AuthRepo {
         return Left(
             Serverfailure(response.data['message'] ?? 'Failed to check ID'));
       }
+      UserStorage.updateUserData(
+        idFrontSide: frontImage64,
+        idBackSide: backImage64,
+      );
+
+      return Right(listFiles);
     } catch (e) {
       return Left(Serverfailure(e.toString()));
     }
@@ -362,14 +361,13 @@ class AuthRepoImp implements AuthRepo {
     String errorMessage =
         'An error occurred during create face ID, please try again or take clear photo';
     String checkState = isSignUp ? 'signUp' : 'verify';
-    return Right(photo);
     try {
       final formData = FormData.fromMap({
         'file': await MultipartFile.fromFile(photo.path),
       });
 
       final response = await Dio().post(
-        'https://fe60-41-234-5-74.ngrok-free.app/verify',
+        'http://192.168.1.3:7000/$checkState',
         data: formData,
       );
 
