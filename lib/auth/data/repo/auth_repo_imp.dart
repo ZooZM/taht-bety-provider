@@ -16,9 +16,31 @@ class AuthRepoImp implements AuthRepo {
 
   AuthRepoImp(this.apiService);
   @override
-  Future<void> resetPassword({required String email}) {
-    // TODO: implement resetPassword
-    throw UnimplementedError();
+  Future<Either<Failure, void>> resetPassword({required String email}) async {
+    try {
+      final response = await apiService.post(
+        endPoint: "auth/forgot-password",
+        data: {'email': email},
+      );
+
+      if (response['success']) {
+        // ignore: void_checks
+        return Right(response['message'] ?? 'Reset code sent to your email');
+      } else {
+        return Left(
+            Serverfailure(response['message'] ?? 'Failed to send reset code'));
+      }
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data is Map<String, dynamic>) {
+        if (e.response!.data['error_code'] == "A4000") {
+          return Left(Serverfailure("Please verify your email first."));
+        } else {
+          return Left(Serverfailure(e.response!.data['message'] ??
+              'An error occurred during sign in'));
+        }
+      }
+      return Left(Serverfailure(e.toString()));
+    }
   }
 
   @override
@@ -130,9 +152,9 @@ class AuthRepoImp implements AuthRepo {
         final now = DateTime.now();
         final difference = now.difference(user.lastPhotoAt!);
 
-        if (difference.inDays > 2 && AppFun.needId(user.type!)) {
-          return left(Serverfailure('need verify'));
-        }
+        // if (difference.inDays > 2 && AppFun.needId(user.type!)) {
+        //   return left(Serverfailure('need verify'));
+        // }
         return Right(user);
       } else {
         return Left(Serverfailure('Failed to sign in'));
@@ -319,9 +341,9 @@ class AuthRepoImp implements AuthRepo {
       ];
       String frontImage64 = await AppFun.imageToBase64(frontImage);
       String backImage64 = await AppFun.imageToBase64(backImage);
-
+// 'http://192.168.1.3:9000/predict'
       final response = await Dio().post(
-        'https://1d48-41-43-177-204.ngrok-free.app/predict',
+        'http://192.168.1.3:9000/predict',
         data: formData,
       );
 
@@ -344,12 +366,6 @@ class AuthRepoImp implements AuthRepo {
         return Left(
             Serverfailure(response.data['message'] ?? 'Failed to check ID'));
       }
-      UserStorage.updateUserData(
-        idFrontSide: frontImage64,
-        idBackSide: backImage64,
-      );
-
-      return Right(listFiles);
     } catch (e) {
       return Left(Serverfailure(e.toString()));
     }
@@ -399,6 +415,7 @@ class AuthRepoImp implements AuthRepo {
           "isActive": isActive,
           "isOnline": false,
           "reports": [],
+          "actionBy": "ai",
           "locations": [
             {
               "coordinates": {

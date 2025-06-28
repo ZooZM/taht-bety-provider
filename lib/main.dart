@@ -13,6 +13,10 @@ import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/u
 import 'package:taht_bety_provider/features/orders/data/repo/order_repo_impl.dart';
 import 'package:taht_bety_provider/features/orders/presentation/view_model/cubit/order_cubit.dart';
 import 'package:taht_bety_provider/features/orders/presentation/view_model/cubit/update_order_cubit.dart';
+import 'package:taht_bety_provider/features/payment/data/repo/dashboard_repo_impl.dart';
+import 'package:taht_bety_provider/features/payment/presentation/view%20model/cubit/confirm_pay_cubit.dart';
+import 'package:taht_bety_provider/features/payment/presentation/view%20model/cubit/dashboard_cubit.dart';
+import 'package:taht_bety_provider/features/payment/presentation/view%20model/cubit/transactions_history_cubit.dart';
 
 import 'features/handle_product/presentation/view_model/product_cubit/product_cubit.dart';
 
@@ -69,6 +73,21 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => UpdateOrderCubit(
             getIt<OrderRepoImpl>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => DashboardCubit(
+            getIt<DashboardRepoImpl>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => TransactionsHistoryCubit(
+            getIt<DashboardRepoImpl>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ConfirmPayCubit(
+            getIt<DashboardRepoImpl>(),
           ),
         ),
       ],

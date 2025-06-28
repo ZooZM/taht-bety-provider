@@ -41,6 +41,7 @@ class _ServUpperWidgetState extends State<ServUpperWidget> {
     final double coverHeight = avHeight * 0.24;
     final double imageWidth = 0.25 * avWidth;
     final double imageHeight = 0.122 * avHeight;
+
     return BlocConsumer<UpdateProviderCubit, UpdateProviderState>(
       listener: (context, state) {
         if (state is UpdateProviderFailure) {
@@ -59,14 +60,43 @@ class _ServUpperWidgetState extends State<ServUpperWidget> {
         }
         return Column(
           children: [
+            // رسالة التنبيه إذا لم يكن مفعل
+            if (!(widget.provider.isActive ?? true))
+              Container(
+                width: double.infinity,
+                margin:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.redAccent),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.warning_amber_rounded, color: Colors.redAccent),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "Your account is currently not activated, please contact the administration or wait for activation.",
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             HomeAppBar(
               providerId: widget.provider.providerId!,
               isOnline: isOnline,
+              isActive: (widget.provider.isActive ?? true),
             ),
             SizedBox(
               width: cWidth,
               height: cHeight + 5,
-              // https://s3-alpha-sig.figma.com/img/b741/297c/49ff74de02ee0013dd84741b92dde045?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=M1HyrlHyeCZ2W~U734U7WIad301pSaZWbfwpthUSnmJAvXmRTji~Sgd27RlFWj7Vx0yilKHATFGFobLZQgoMd0m428344Za0ix1c4Mc3dHuR9EVAJNwivO4uG5xL4D1BTRONCzIXtdNGMW~JCTmmwMflSdDOU-7SH1OMSPs6xu8Mn-UO5S8tzVOjTj~tk-QB5vxN1nZDsH8lfkxqxoBuw7JKim0Csto9v4K~HGK~Gv7gkVp~F71t-lDcZTg-x3MBGiFPZTmU4i3Tfm5Hr4o04HaapD-O45s2e~CXfTPOFj0CAx0FPs7Kydn6fSvkr3R-RwWlSLH8uL2nmGkMHUV3BQ__
               child: Stack(
                 children: [
                   CustomCushedImage(

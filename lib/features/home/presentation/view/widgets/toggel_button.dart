@@ -10,10 +10,12 @@ class SlidingToggleSwitch extends StatefulWidget {
     required this.providerId,
     required this.isOnline,
     required this.trackWidth,
+    required this.isActive,
   });
   final String providerId;
   final bool isOnline;
   final double trackWidth;
+  final bool isActive;
   @override
   _SlidingToggleSwitchState createState() => _SlidingToggleSwitchState();
 }
@@ -37,6 +39,9 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
 
     _isOnline = widget.isOnline;
     _dragPosition = _isOnline ? 1.0 : 0.0;
+    // widget.isActive
+    //     ? _dragPosition = _isOnline ? 0.0 : 1.0 // Online = 0.0, Offline = 1.0
+    //     : _dragPosition = 1.0; // إذا لم يكن مفعل، يكون دائماً Offline
     _trackWidth = widget.trackWidth;
     _thumbWidth = widget.trackWidth / 2;
     // تهيئة وحدة التحكم بالرسوم المتحركة
@@ -162,9 +167,11 @@ class _SlidingToggleSwitchState extends State<SlidingToggleSwitch>
         // onHorizontalDragStart: _handleDragStart,
         // onHorizontalDragUpdate: _handleDragUpdate,
         // onHorizontalDragEnd: _handleDragEnd,
-        onTap: () {
-          _handleTap(true); // السماح بالنقر للتبديل أيضًا
-        },
+        onTap: widget.isActive
+            ? () {
+                _handleTap(true);
+              }
+            : null, // السماح بالنقر للتبديل أيضًا
         // () async {
         // await Future.delayed(const Duration(seconds: 2));
 

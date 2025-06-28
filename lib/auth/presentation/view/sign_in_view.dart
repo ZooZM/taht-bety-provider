@@ -29,33 +29,30 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  void _requestPasswordReset() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty ||
+        !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email')),
+      );
+      return;
+    }
+
+    context.read<AuthCubit>().resetPassword(email: email);
+  }
+
   void fetchUser() async {
     final authRepo = AuthRepoImp(ApiService(Dio()));
     try {
       final response = await authRepo.fetchuser();
       response.fold(
-        (failure) {
-          // Handle failure case
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(failure.failurMsg),
-              duration: const Duration(seconds: 3),
-            ),
-          );
-        },
+        (failure) {},
         (user) {
           context.go(AppRouter.kHomePage);
         },
       );
-    } catch (e) {
-      // Handle any exceptions that occur during the fetch
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("An error occurred: $e"),
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
+    } catch (e) {}
   }
 
   @override
@@ -164,7 +161,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: _requestPasswordReset,
                         child: const Text(
                           "Forgot Password?",
                           style: TextStyle(color: Color(0xff99A8C2)),
@@ -203,6 +200,14 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           );
                           context.go(AppRouter.kCreateProviderAccount);
+                        } else if (state is AuthResetPasswordSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Reset code sent to your email'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          context.push(AppRouter.kVerifyResetCodeScreen);
                         }
                       },
                       builder: (context, state) {

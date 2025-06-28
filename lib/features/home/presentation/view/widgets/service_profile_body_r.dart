@@ -32,7 +32,7 @@ class ServiceProfileBodyR extends StatelessWidget {
           const SizedBox(
             height: 12,
           ),
-           Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

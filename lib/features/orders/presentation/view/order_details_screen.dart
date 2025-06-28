@@ -280,11 +280,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           ),
         ),
         const SizedBox(width: 10),
-        Text(
-          value,
-          style: Styles.subtitle18Bold.copyWith(
-            color: const Color(0xFF15243F),
-            fontWeight: FontWeight.w600,
+        SizedBox(
+          width: width * 0.5,
+          child: Text(
+            value,
+            style: Styles.subtitle18Bold.copyWith(
+              color: const Color(0xFF15243F),
+              fontWeight: FontWeight.w600,
+            ),
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

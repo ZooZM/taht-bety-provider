@@ -18,6 +18,8 @@ const kCurUserBox = "providerCurUserBox";
 const kRecentSearchBox = "RecentSearchBox";
 const kBasketBox = "basketBox";
 const kProvidersBox = "providerBox";
+const kPaymentUrl =
+    "https://accept.paymob.com/api/acceptance/iframes/935035?payment_token=";
 
 Map<String, IconData> categoryIcons = {
   "R-Electric": Icons.electrical_services,

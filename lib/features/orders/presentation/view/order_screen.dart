@@ -141,9 +141,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   child: BlocConsumer<OrderCubit, OrderState>(
                 listener: (context, state) {
                   if (state is OrderError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
                   } else if (state is OrderSuccess) {
                     orders = state.orders;
                   }

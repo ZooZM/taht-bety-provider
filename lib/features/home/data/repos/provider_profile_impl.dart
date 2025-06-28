@@ -39,7 +39,7 @@ class ProviderProfileImpl implements ProviderProfileRepo {
           type: provider.providerType,
         );
       }
-
+      print("Provider fetched successfully: ${provider?.posts?[0].id ?? ''}");
       return provider == null
           ? left(Serverfailure("No provider found"))
           : right(provider);
@@ -106,7 +106,8 @@ class ProviderProfileImpl implements ProviderProfileRepo {
   Future<Either<Failure, ProviderModel>> updateProviderState(
       bool isOnline, String providerId) async {
     try {
-      var response = await apiService.put(
+      print("Updating provider state: $isOnline for providerId: $providerId");
+      var response = await apiService.patch(
         endPoint: 'providers/$providerId',
         data: {
           "isOnline": isOnline,
@@ -199,7 +200,7 @@ class ProviderProfileImpl implements ProviderProfileRepo {
       required bool isMainService}) async {
     try {
       final user = UserStorage.getUserData();
-      final response = await apiService.put(
+      final response = await apiService.patch(
         endPoint: 'posts/$postId',
         data: {
           'title': title,

@@ -43,11 +43,10 @@ class ItemProductCard extends StatelessWidget {
                   right: 8,
                   child: GestureDetector(
                     onTap: () {
-                       context.push(
-                    AppRouter.kUpdateProduct,
-                    extra: {'M': post},
-                  );
-                  
+                      context.push(
+                        AppRouter.kUpdateProduct,
+                        extra: {'M': post},
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(

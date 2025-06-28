@@ -93,6 +93,8 @@ flutter:
     - assets/icons/center_face.png
     - assets/images/market_categories/
     - assets/icons/finish.png
+    - assets/images/paymob.jpg
+    - assets/images/taht_bety_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

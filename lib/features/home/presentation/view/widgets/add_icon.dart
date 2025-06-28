@@ -3,17 +3,17 @@ import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';
 
 class AddIcon extends StatelessWidget {
-   AddIcon({
+  AddIcon({
     super.key,
     required this.title,
-   required this.onTap,
+    required this.onTap,
   });
   final String title;
   final void Function() onTap;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap ,
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(

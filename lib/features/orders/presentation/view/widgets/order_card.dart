@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taht_bety_provider/features/orders/data/models/order_model/order_model.dart';
+import 'package:taht_bety_provider/features/orders/presentation/view_model/cubit/update_order_cubit.dart';
 
 import '../../../../../core/utils/app_router.dart';
 
@@ -67,8 +69,8 @@ class OrderCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Text(
-                    'date',
+                  Text(
+                    '${order.appointment?.time ?? ''} - ${order.appointment?.date?.substring(5, 10) ?? ''}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -85,7 +87,7 @@ class OrderCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      'Address: ${order.userId?.locations?[0].address ?? ''}',
+                      'Address: ${order.userId?.locations != null && order.userId!.locations!.isNotEmpty ? order.userId!.locations![0].address ?? '' : 'Unknown'}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -125,13 +127,17 @@ class OrderCard extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFCFD9E9),
                         ),
-                        child: Text(
-                            style: const TextStyle(
-                                color: Color(0xFF15243F),
-                                fontWeight: FontWeight.bold),
-                            mode == OrderCardMode.pending
-                                ? 'Accept'
-                                : 'Completed'),
+                        child: BlocBuilder<UpdateOrderCubit, UpdateOrderState>(
+                          builder: (context, state) {
+                            return Text(
+                                style: const TextStyle(
+                                    color: Color(0xFF15243F),
+                                    fontWeight: FontWeight.bold),
+                                mode == OrderCardMode.pending
+                                    ? 'Accept'
+                                    : 'Completed');
+                          },
+                        ),
                       ),
                       ElevatedButton(
                         onPressed: onReject,

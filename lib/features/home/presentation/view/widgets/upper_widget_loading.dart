@@ -1,17 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taht_bety_provider/constants.dart';
-import 'package:taht_bety_provider/core/utils/app_fun.dart';
 import 'package:taht_bety_provider/core/utils/styles.dart';
 import 'package:taht_bety_provider/core/widgets/custom_cushed_image.dart';
 import 'package:taht_bety_provider/core/widgets/custom_widget_loading.dart';
-import 'package:taht_bety_provider/core/widgets/show_custom_choose_image_source.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/home_app_bar.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_prof_image.dart';
 import 'package:taht_bety_provider/features/home/presentation/view/widgets/serv_profile_info.dart';
-import 'package:taht_bety_provider/features/home/presentation/view_model/cubit/update_provider_cubit.dart';
 
 class UpperWidgetLoading extends StatelessWidget {
   const UpperWidgetLoading({
@@ -34,6 +28,7 @@ class UpperWidgetLoading extends StatelessWidget {
           HomeAppBar(
             providerId: 'providerId',
             isOnline: isOnline,
+            isActive: true, // Assuming the provider is active
           ),
           SizedBox(
             width: cWidth,

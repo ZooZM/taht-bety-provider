@@ -1,58 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:taht_bety_provider/auth/presentation/view/widgets/back_button_circle.dart';
 
-class TransactionsScreen extends StatelessWidget {
-  const TransactionsScreen({super.key});
+class TransactionsScreen extends StatefulWidget {
+  const TransactionsScreen({super.key, required this.fullTransactions});
+  final Map<String, List<TransactionItem>> fullTransactions;
+  @override
+  State<TransactionsScreen> createState() => _TransactionsScreenState();
+}
 
+class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
-
-    final fullTransactions = {
-      '28 May': [
-        TransactionItem(
-            icon: Icons.add, label: 'Top up', amount: '+EGP50', time: '23:45'),
-        TransactionItem(
-            icon: Icons.receipt_long,
-            label: 'order #5647805',
-            amount: '-EGP22',
-            time: '19:45'),
-      ],
-      '14 May': [
-        TransactionItem(
-            icon: Icons.receipt_long,
-            label: 'order #5647805',
-            amount: '-EGP22',
-            time: '19:45'),
-      ],
-      '30 March': [
-        TransactionItem(
-            icon: Icons.add, label: 'Top up', amount: '+EGP50', time: '23:45'),
-        TransactionItem(
-            icon: Icons.receipt_long,
-            label: 'order #5647805',
-            amount: '-EGP22',
-            time: '19:45'),
-      ],
-      '13 September ,2024': [
-        TransactionItem(
-            icon: Icons.add, label: 'Top up', amount: '+EGP50', time: '23:45'),
-        TransactionItem(
-            icon: Icons.receipt_long,
-            label: 'order #5647805',
-            amount: '-EGP22',
-            time: '19:45'),
-      ],
-      '29 August ,2024': [
-        TransactionItem(
-            icon: Icons.receipt_long,
-            label: 'order #5647805',
-            amount: '-EGP22',
-            time: '19:45'),
-      ],
-    };
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -65,7 +26,7 @@ class TransactionsScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Header
-              Row(
+              const Row(
                 children: const [
                   BackButtonCircle(),
                   SizedBox(width: 16),
@@ -85,7 +46,7 @@ class TransactionsScreen extends StatelessWidget {
               // Transactions List
               Expanded(
                 child: ListView(
-                  children: fullTransactions.entries.expand((entry) {
+                  children: widget.fullTransactions.entries.expand((entry) {
                     return [
                       Padding(
                         padding: const EdgeInsets.only(top: 16, bottom: 6),
@@ -99,9 +60,9 @@ class TransactionsScreen extends StatelessWidget {
                         ),
                       ),
                       ...entry.value
-                          .map((item) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: const SizedBox(),
+                          .map((item) => const Padding(
+                                padding: EdgeInsets.only(bottom: 12),
+                                child: SizedBox(),
                               ))
                           .toList()
                         ..setAll(
@@ -154,7 +115,6 @@ class TransactionRow extends StatelessWidget {
     required this.fontSize,
     required this.spacing,
   });
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -191,7 +151,7 @@ class TransactionRow extends StatelessWidget {
               ),
             ),
             Text(
-              item.time,
+              item.time.split(" ")[item.time.split(" ").length - 1],
               style: TextStyle(
                 fontSize: fontSize - 1,
                 color: const Color(0xFF99A8C2),

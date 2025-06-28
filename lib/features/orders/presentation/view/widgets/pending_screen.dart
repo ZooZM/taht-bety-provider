@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taht_bety_provider/constants.dart';
 import 'package:taht_bety_provider/core/widgets/custom_widget_loading.dart';
 import 'package:taht_bety_provider/features/orders/data/models/order_model/order_model.dart';
 import 'package:taht_bety_provider/features/orders/presentation/view_model/cubit/order_cubit.dart';
@@ -34,29 +35,25 @@ class PendingOrdersScreen extends StatelessWidget {
                   }
                 },
                 builder: (context, state) {
-                  if (state is UpdateOrderLoading) {
-                    return CustomWidgetLoading(
-                      child: OrderCard(
-                        order: orders[index],
-                        mode: OrderCardMode.pending,
-                        onAccept: () {},
-                        onReject: () {},
-                      ),
-                    );
-                  }
                   return OrderCard(
                     order: orders[index],
                     mode: OrderCardMode.pending,
-                    onAccept: () async => await context
-                        .read<UpdateOrderCubit>()
-                        .updateOrder(
-                            orderId: orders[index].id!,
-                            orderState: OrderCardMode.accepted),
-                    onReject: () async => await context
-                        .read<UpdateOrderCubit>()
-                        .updateOrder(
-                            orderId: orders[index].id!,
-                            orderState: OrderCardMode.cancelled),
+                    onAccept: () async {
+                      if (state is UpdateOrderLoading) {
+                        return;
+                      }
+                      await context.read<UpdateOrderCubit>().updateOrder(
+                          orderId: orders[index].id!,
+                          orderState: OrderCardMode.accepted);
+                    },
+                    onReject: () async {
+                      if (state is UpdateOrderLoading) {
+                        return;
+                      }
+                      await context.read<UpdateOrderCubit>().updateOrder(
+                          orderId: orders[index].id!,
+                          orderState: OrderCardMode.cancelled);
+                    },
                   );
                 },
               ));

@@ -8,6 +8,7 @@ import 'package:taht_bety_provider/auth/data/repo/auth_repo_imp.dart';
 import 'package:taht_bety_provider/core/utils/api_service.dart';
 import 'package:taht_bety_provider/features/home/data/repos/provider_profile_impl.dart';
 import 'package:taht_bety_provider/features/orders/data/repo/order_repo_impl.dart';
+import 'package:taht_bety_provider/features/payment/data/repo/dashboard_repo_impl.dart';
 import 'package:taht_bety_provider/firebase_options.dart';
 
 final getIt = GetIt.instance;
@@ -37,6 +38,13 @@ Future<void> setup() async {
   );
   getIt.registerSingleton<OrderRepoImpl>(
     OrderRepoImpl(
+      ApiService(
+        Dio(),
+      ),
+    ),
+  );
+  getIt.registerSingleton<DashboardRepoImpl>(
+    DashboardRepoImpl(
       ApiService(
         Dio(),
       ),

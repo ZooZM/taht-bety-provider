@@ -41,13 +41,16 @@ class OrderRepoImpl implements OrderRepo {
           List<Post> fullPosts = [];
 
           for (var partialPost in order.postId!) {
-            final postResponse = await apiService.get(
-              token: user.token,
-              endPoint: 'posts/${partialPost.id}',
-            );
+            try {
+              // Fetch full post details for each post ID
+              final postResponse = await apiService.get(
+                token: user.token,
+                endPoint: 'posts/${partialPost.id}',
+              );
 
-            final postData = postResponse['data']['doc'];
-            fullPosts.add(Post.fromJson(postData));
+              final postData = postResponse['data']['doc'];
+              fullPosts.add(Post.fromJson(postData));
+            } catch (e) {}
           }
 
           order.postId = fullPosts;

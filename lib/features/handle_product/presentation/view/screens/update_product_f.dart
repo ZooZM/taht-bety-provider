@@ -91,7 +91,7 @@ class _UpdateProductFState extends State<UpdateProductF> {
         print('Error converting new image: $e');
       }
     }
-
+    print(base64Images);
     return base64Images;
   }
 

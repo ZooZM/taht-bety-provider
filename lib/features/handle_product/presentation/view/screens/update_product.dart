@@ -27,13 +27,13 @@ class UpdateProduct extends StatelessWidget {
             )
           : providerType.split("-")[0] == "F"
               ? UpdateProductF(post: posts)
-              : providerType.split("-")[0] == "R"
+              : providerType.split("-")[0] == ("R")
                   ? UpdateProductR(post: posts)
                   : providerType.split("-")[0] == "M"
                       ? UpdateProductM(
                           post: posts,
                         )
-                      : null,
+                      : UpdateProductR(post: posts),
     );
   }
 }

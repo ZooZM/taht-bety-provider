@@ -74,50 +74,49 @@ class ProductCard extends StatelessWidget {
                               'No Image',
                               style: Styles.subtitle18Bold,
                             ),
-                          ):
-                Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.black26,
-                      ),
-                      child: post.images!.length > 1
-                          ? Center(
-                              child: Text(
-                                '${post.images!.length} images',
-                                style: Styles.subtitle18Bold.copyWith(
-                                  color: kWhite,
+                          )
+                        : Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  color: Colors.black26,
                                 ),
+                                child: post.images!.length > 1
+                                    ? Center(
+                                        child: Text(
+                                          '${post.images!.length} images',
+                                          style: Styles.subtitle18Bold.copyWith(
+                                            color: kWhite,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
                               ),
-                            )
-                          : null,
-                 
-                    ),
-                    CustomCushedImage(
-                      image: post.images![0],
-                      height: imageHeight,
-                      width: imageWidth,
-                      hasShadow: false,
-                      isImage: true,
-                    ),
-                    if (post.images!.length > 1)
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: Colors.black26,
-                        ),
-                        child: Center(
-                          child: Text(
-                            post.images!.length.toString(),
-                            style:
-                                Styles.subtitle18Bold.copyWith(color: kWhite),
+                              CustomCushedImage(
+                                image: post.images![0],
+                                height: imageHeight,
+                                width: imageWidth,
+                                hasShadow: false,
+                                isImage: true,
+                              ),
+                              if (post.images!.length > 1)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    color: Colors.black26,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      post.images!.length.toString(),
+                                      style: Styles.subtitle18Bold
+                                          .copyWith(color: kWhite),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
-                        ),
-                      ),
-                  ],
-                ),
               ),
             ],
           ),
